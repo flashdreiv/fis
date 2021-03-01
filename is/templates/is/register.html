@@ -1,0 +1,71 @@
+{% extends 'is/base.html' %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                        </div>
+                        <form class="user" method="POST" >
+                            {% csrf_token %}
+                            {{form.non_field_errors}} 
+                            <!-- {% for field in form %}
+                                {%render_field field.errors%}
+                            {% endfor %} -->
+                            <!-- {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{form.errors}}
+                            </div>
+                            {% endif %} -->
+                            <div class="form-group">
+                                {%render_field form.username class="form-control form-control-user" id="username" placeholder="User Name"%}
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    {%render_field form.first_name class="form-control form-control-user" id="firstname" placeholder="First Name"%}
+                                </div>
+                                <div class="col-sm-6">
+                                    {%render_field form.last_name class="form-control form-control-user" id="lastname" placeholder="Last Name"%}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    {%render_field form.mobile_number class="form-control form-control-user" id="mobile_number" placeholder="Mobile Number"%}
+                                </div>
+                                <div class="col-sm-6">
+                                    {%render_field form.location data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="btn btn-primary dropdown-toggle" id="location" placeholder="Location" %}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    {%render_field form.password1 type="password" class="form-control form-control-user" id="password1" placeholder="Password"%}
+                                </div>
+                                <div class="col-sm-6">
+                                    {%render_field form.password2 type="password" class="form-control form-control-user" id="password2" placeholder="Confirm Password"%}
+                                </div>
+                            </div>
+                            <input type="submit" value="Register" class="btn btn-primary btn-user btn-block">        
+                            <hr>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" href="forgot-password.html">Forgot Password?</a>
+                        </div>
+                        <div class="text-center">
+                            <a class="small" href="{% url 'login' %}">Already have an account? Login!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+    
