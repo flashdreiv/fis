@@ -3,20 +3,25 @@ from django.contrib import messages
 from . forms import YFarmerForm,LoginForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from . decorators import unauthenticated_user
+from . decorators import unauthenticated_user,allowed_users,admin_only
+from django.contrib.auth.models import Group
+
 # Create your views here.
 
 @login_required(login_url='login')
-def index(request):
-    return render(request,'is/index.html')
+@admin_only
+def adminView(request):
+    return render(request,'is/admin.html')
 
 @unauthenticated_user
 def register(request):
     if request.method == "POST":
         form = YFarmerForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             username = form.cleaned_data.get('username')
+            group = Group.objects.get(name='farmer')
+            user.groups.add(group)
             messages.success(request,f'Account created for {username}!')
             return redirect('login')
     else:
@@ -33,7 +38,7 @@ def loginPage(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('index')
+            return redirect('admin')
         else:
             messages.error(request, 'Incorrect Login credentials')
     return render(request, 'is/login.html', {'form': form})
@@ -41,9 +46,11 @@ def loginPage(request):
 @login_required(login_url='login')
 def logOutUser(request):
     logout(request)
-    return render(request,'is/logout.html')
+    return redirect('login')
 
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['farmer'])
 def userPage(request):
+
     return render(request,'is/farmer.html')
     
