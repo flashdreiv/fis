@@ -267,39 +267,41 @@
                     
 
                 </div>
-
-                <div class="col-lg-6 mb-4">
-                    <!-- Approach -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">New Purchases</h6>
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <!-- Approach -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">New Purchases</h6>
+                            </div>
+                            <div class="card-body">
+                                <p>{{request.user.farmer}}</p>
+                                <p class="mb-0">Before working with this theme, you should become familiar with the
+                                    Bootstrap framework, especially the utility classes.</p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p>{{request.user.farmer}}</p>
-                            <p class="mb-0">Before working with this theme, you should become familiar with the
-                                Bootstrap framework, especially the utility classes.</p>
-                        </div>
+    
                     </div>
-
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <!-- Approach -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Enter Coupon</h6>
+                    <div class="col-lg-6 mb-4">
+                        <!-- Approach -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Enter Coupon</h6>
+                            </div>
+                            <div class="card-body">
+                                <!-- <p class="mb-0">Before working with this theme, you should become familiar with the
+                                    Bootstrap framework, especially the utility classes.</p> -->
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{form}}
+                                    <input type="submit" value="Submit coupon"/>
+                                </form>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <!-- <p class="mb-0">Before working with this theme, you should become familiar with the
-                                Bootstrap framework, especially the utility classes.</p> -->
-                            <form action="POST">
-                                {% csrf_token %}
-                                {{form}}
-                                <input type="submit" value="Submit coupon"/>
-                            </form>
-                        </div>
+    
                     </div>
-
                 </div>
+                
             </div>
 
         </div>

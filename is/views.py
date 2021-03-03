@@ -55,19 +55,27 @@ def logOutUser(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['farmer'])
 def userPage(request):
+    form = ApplyCouponForm()
     now = timezone.now()
-    form = ApplyCouponForm(request.POST)
-    if form.is_valid():
-        code = form.cleaned_data['code']
-        try:
-            coupon = Coupon.objects.get(code__iexact=code,
-                valid_from__lte=now,
-                valid_to__gte=now,
-                is_active=True
-            )
-            request.session['coupon_id'] = coupon.id
-        except Coupon.DoesNotExist:
-            request.session['coupon_id'] = None
-        
+    if request.method == 'POST':
+        form = ApplyCouponForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                coupon = Coupon.objects.get(code__iexact=code,
+                    is_used=False,
+                    valid_from__lte=now,
+                    valid_to__gte=now,
+                    is_active=True
+                )
+                request.session['coupon_id'] = coupon.id
+                coupon.farmer = request.user.farmer
+                request.user.farmer.standard_ticket +=1
+                coupon.is_used = True
+                coupon.save()
+                messages.success(request,'Successfully submitted ticket')
+            except Coupon.DoesNotExist:
+                request.session['coupon_id'] = None
+                messages.error(request,'Coupon does not exist')
     return render(request,'is/farmer.html',{'form':form})
     
