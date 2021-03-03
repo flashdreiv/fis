@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
+from . models import Farmer
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-
 class YFarmerForm(UserCreationForm):
     provinces = (
         ('Isabela','Isabela'),
@@ -21,4 +21,7 @@ class LoginForm(AuthenticationForm):
             'username',
             'password'
         ]
+
+class ApplyCouponForm(forms.Form):
+    code = forms.CharField(required=False)
     

@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . forms import YFarmerForm,LoginForm
+from . forms import YFarmerForm,LoginForm,ApplyCouponForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
 from django.contrib.auth.models import Group
-
+from . models import Farmer,Coupon
+from django.utils import timezone
 # Create your views here.
 
 @login_required(login_url='login')
@@ -22,6 +23,9 @@ def register(request):
             username = form.cleaned_data.get('username')
             group = Group.objects.get(name='farmer')
             user.groups.add(group)
+            farmer = Farmer()
+            farmer.user = user
+            farmer.save()
             messages.success(request,f'Account created for {username}!')
             return redirect('login')
     else:
@@ -51,6 +55,19 @@ def logOutUser(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['farmer'])
 def userPage(request):
-
-    return render(request,'is/farmer.html')
+    now = timezone.now()
+    form = ApplyCouponForm(request.POST)
+    if form.is_valid():
+        code = form.cleaned_data['code']
+        try:
+            coupon = Coupon.objects.get(code__iexact=code,
+                valid_from__lte=now,
+                valid_to__gte=now,
+                is_active=True
+            )
+            request.session['coupon_id'] = coupon.id
+        except Coupon.DoesNotExist:
+            request.session['coupon_id'] = None
+        
+    return render(request,'is/farmer.html',{'form':form})
     
