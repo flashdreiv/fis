@@ -70,8 +70,13 @@ def userPage(request):
                 )
                 request.session['coupon_id'] = coupon.id
                 coupon.farmer = request.user.farmer
-                request.user.farmer.standard_ticket +=1
+                farmer = request.user.farmer
+                saleslady = coupon.saleslady
+                farmer.standard_ticket+=coupon.item.ticket_value
+                saleslady.standard_ticket+=coupon.item.ticket_value
                 coupon.is_used = True
+                farmer.save()
+                saleslady.save()
                 coupon.save()
                 messages.success(request,'Successfully submitted ticket')
             except Coupon.DoesNotExist:
