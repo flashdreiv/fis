@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
 from django.contrib.auth.models import Group
 from . models import Farmer,Coupon
+from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your views here.
 
@@ -64,16 +65,19 @@ def userPage(request):
             try:
                 coupon = Coupon.objects.get(code__iexact=code,
                     is_used=False,
-                    valid_from__lte=now,
-                    valid_to__gte=now,
                     is_active=True
                 )
                 request.session['coupon_id'] = coupon.id
                 coupon.farmer = request.user.farmer
                 farmer = request.user.farmer
                 saleslady = coupon.saleslady
-                farmer.standard_ticket+=coupon.item.ticket_value
-                saleslady.standard_ticket+=coupon.item.ticket_value
+                #Check if golden ticket
+                if(coupon.is_golden_ticket):
+                    farmer.golden_ticket+=1
+                    saleslady.golden_ticket+=1
+                else:
+                    farmer.standard_ticket+=coupon.item.ticket_value
+                    saleslady.standard_ticket+=coupon.item.ticket_value
                 coupon.is_used = True
                 farmer.save()
                 saleslady.save()
@@ -84,3 +88,10 @@ def userPage(request):
                 messages.error(request,'Coupon does not exist')
     return render(request,'is/farmer.html',{'form':form})
     
+@admin_only
+def manageUsers(request):
+    users = User.groups.get(name__iexact='farmer')
+    context = {
+        'users':users
+    }
+    return render(request,'is/manageUsers.html',context)
