@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your views here.
 
+
 @login_required(login_url='login')
 @admin_only
 def adminView(request):
@@ -86,11 +87,11 @@ def userPage(request):
             except Coupon.DoesNotExist:
                 request.session['coupon_id'] = None
                 messages.error(request,'Coupon does not exist')
-    return render(request,'is/farmer.html',{'form':form})
+    return render(request,'is/standard_user.html',{'form':form})
     
 @admin_only
 def manageUsers(request):
-    users = User.groups.get(name__iexact='farmer')
+    users = User.objects.all().exclude(groups = 1)
     context = {
         'users':users
     }

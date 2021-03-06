@@ -44,6 +44,8 @@
     }
   });
 
+
+  
   // Smooth scrolling using jQuery easing
   $(document).on('click', 'a.scroll-to-top', function(e) {
     var $anchor = $(this);
@@ -54,3 +56,4 @@
   });
 
 })(jQuery); // End of use strict
+

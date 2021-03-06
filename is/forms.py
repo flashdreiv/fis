@@ -25,4 +25,7 @@ class LoginForm(AuthenticationForm):
 
 class ApplyCouponForm(forms.Form):
     code = forms.CharField(required=False)
+
+
+
     

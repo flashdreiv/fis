@@ -1,23 +1,5 @@
-    {% extends 'is/base.html' %}
-
-    {% block content %}
-    {% include 'is/sidebar.html' %}
-    <div class="container-fluid">
-
-        <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Manage Users</h1>
-        </div>
-        {% include 'is/table.html' %}
-
-
-
-            
-  
-
-
-
-
-
-    </div>
-    {% endblock content %}
+{% extends 'is/base.html' %}
+{% block content %}
+    {% include 'is/tables.html' %}
+{% endblock content %}
+    
