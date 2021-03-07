@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="{% url 'index' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -29,12 +29,12 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'managusers' %}">
+        <a class="nav-link" href="{% url 'manageusers' %}">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Manage Users</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a class="nav-link" href="{% url 'managecoupons' %}">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Manage Coupons</span></a>
     </li>

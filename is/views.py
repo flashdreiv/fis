@@ -1,13 +1,14 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . forms import YFarmerForm,LoginForm,ApplyCouponForm
+from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
 from django.contrib.auth.models import Group
-from . models import Farmer,Coupon
+from . models import Farmer,Coupon,Product
 from django.contrib.auth.models import User
 from django.utils import timezone
+from . generate_random_coupon import generate_coupon_code
 # Create your views here.
 
 
@@ -90,9 +91,39 @@ def userPage(request):
     return render(request,'is/standard_user.html',{'form':form})
     
 @admin_only
+@login_required(login_url='login')
 def manageUsers(request):
     users = User.objects.all().exclude(groups = 1)
     context = {
         'users':users
     }
     return render(request,'is/manageUsers.html',context)
+
+@admin_only
+@login_required(login_url='login')
+def manageCoupons(request):
+    form = GenerateCouponForm(request.POST or None)
+    coupon_list = Coupon.objects.order_by('-date_created')
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            count = request.POST.get('count')
+            count = int(count)
+            item_id = request.POST.get('item')
+            for x in range(count):
+                coupon = Coupon()
+                coupon.item = Product.objects.get(pk=item_id)
+                if coupon.item.pk == 1 or coupon.item.pk == 2 or coupon.item.pk == 3:
+                    coupon.is_golden_ticket = True
+                code = generate_coupon_code()
+                coupon.code = code
+                coupon.save()
+            messages.success(request,f'Generated a total of {count} coupon!')
+        else:
+            form = GenerateCouponForm()
+    context = {
+        'form':form,
+        'coupons':coupon_list
+    }
+    return render(request,'is/manage_coupons.html',context)
+    

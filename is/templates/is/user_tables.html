@@ -29,14 +29,10 @@
                         <td>{{user.groups}}</td>
                         {% if user.farmer %}
                         <td>{{user.farmer.standard_ticket}}</td>
-                        {% endif %}
-                        {% if user.saleslady %}
-                        <td>{{user.saleslady.standard_ticket}}</td>
-                        {% endif %}
-                        {% if user.farmer %}
                         <td>{{user.farmer.golden_ticket}}</td>
                         {% endif %}
                         {% if user.saleslady %}
+                        <td>{{user.saleslady.standard_ticket}}</td>
                         <td>{{user.saleslady.golden_ticket}}</td>
                         {% endif %}
                     </tr>

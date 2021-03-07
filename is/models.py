@@ -21,9 +21,10 @@ class SalesLady(models.Model):
 
 class Product(models.Model):
     category = (
-        ('Aljay Chemicals','Aljay Chemicals'),
-        ('Allied Chemicals','Allied Chemicals'),
-        ('Fertilizer','Fertilizer')
+        ('1','Y+ Package'),
+        ('2','Aljay Seeds'),
+        ('3','Aljay Chemicals'),
+        ('4','Aljay Fertilizer')
     )
     item_name = models.CharField(max_length=50)
     ticket_value = models.IntegerField(default=0)
@@ -41,6 +42,7 @@ class Coupon(models.Model):
     is_golden_ticket=models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_used = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.code

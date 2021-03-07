@@ -1,0 +1,50 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date Generated</th>
+                        <th>Code</th>
+                        <th>Item</th>
+                        <th>Farmer</th>
+                        <th>Sales lady</th>
+                        <th>Golden Ticket</th>
+                        <th>Used</th>
+                        <th>Issued</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Date Generated</th>
+                        <th>Code</th>
+                        <th>Item</th>
+                        <th>Farmer</th>
+                        <th>Sales lady</th>
+                        <th>Golden Ticket</th>
+                        <th>Used</th>
+                        <th>Issued</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for coupon in coupons %}
+                    <tr>
+                        <td>{{coupon.date_created}}</td>
+                        <td>{{coupon.code}}</td>
+                        <td>{{coupon.item}}</td>
+                        <td>{{coupon.farmer}} {{coupon.farmer.user.last_name}}</td>
+                        <td>{{coupon.saleslady}} {{coupon.saleslady.user.last_name}}</td>
+                        <td>{{coupon.is_golden_ticket}}</td>
+                        <td>{{coupon.is_used}}</td>
+                        <td>{{coupon.is_used}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
