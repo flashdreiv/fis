@@ -11,5 +11,5 @@ urlpatterns = [
     path('user',views.userPage,name='user'),
     path('manageusers',views.manageUsers,name='manageusers'),
     path('managecoupons',views.manageCoupons,name='managecoupons'),
-
+    path('manageproducts',views.manageProducts,name='manageproducts'),
 ]

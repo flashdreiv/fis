@@ -15,7 +15,6 @@
                     </tr>
                 </thead>
                 <tfoot>
-                    <tr>
                         <th>Name</th>
                         <th>User Type</th>
                         <th>Standard Ticket</th>
@@ -26,7 +25,7 @@
                     {% for user in users %}
                     <tr>
                         <td>{{user.first_name}} {{user.last_name}}</td>
-                        <td>{{user.groups}}</td>
+                        <td>{{user.groups.get}}</td>
                         {% if user.farmer %}
                         <td>{{user.farmer.standard_ticket}}</td>
                         <td>{{user.farmer.golden_ticket}}</td>

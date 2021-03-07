@@ -47,6 +47,15 @@ class Coupon(models.Model):
     def __str__(self):
         return self.code
 
+#Check SAP Data on Purchase Orders
+class Purchase(models.Model):
+    farmer = models.ForeignKey(Farmer,on_delete=models.SET_NULL,null=True,blank=True)
+    saleslady = models.ForeignKey(SalesLady,on_delete=models.SET_NULL,null=True,blank=True)
+    item = models.ForeignKey(Product,on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
+    purchase_date = models.DateTimeField(auto_now=True)
+
+
     
 
 

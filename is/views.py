@@ -4,10 +4,8 @@ from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
-from django.contrib.auth.models import Group
 from . models import Farmer,Coupon,Product
-from django.contrib.auth.models import User
-from django.utils import timezone
+from django.contrib.auth.models import User,Group
 from . generate_random_coupon import generate_coupon_code
 # Create your views here.
 
@@ -59,7 +57,6 @@ def logOutUser(request):
 @allowed_users(allowed_roles=['farmer'])
 def userPage(request):
     form = ApplyCouponForm()
-    now = timezone.now()
     if request.method == 'POST':
         form = ApplyCouponForm(request.POST)
         if form.is_valid():
@@ -113,12 +110,12 @@ def manageCoupons(request):
             for x in range(count):
                 coupon = Coupon()
                 coupon.item = Product.objects.get(pk=item_id)
-                if coupon.item.pk == 1 or coupon.item.pk == 2 or coupon.item.pk == 3:
+                if coupon.item.pk == 3 or coupon.item.pk == 4 or coupon.item.pk == 5:
                     coupon.is_golden_ticket = True
                 code = generate_coupon_code()
                 coupon.code = code
                 coupon.save()
-            messages.success(request,f'Generated a total of {count} coupon!')
+            messages.success(request,f'Generated a total of {count} coupon for {coupon.item.item_name}')
         else:
             form = GenerateCouponForm()
     context = {
@@ -127,3 +124,10 @@ def manageCoupons(request):
     }
     return render(request,'is/manage_coupons.html',context)
     
+@admin_only
+def manageProducts(request):
+    products = Product.objects.order_by('item_category')
+    context = {
+        'products':products
+    }
+    return render(request,'is/manage_products.html',context)
