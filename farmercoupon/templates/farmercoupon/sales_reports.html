@@ -1,0 +1,44 @@
+{% extends 'farmercoupon/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class='container-fluid'>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Sales Per Item</h3>
+            </div>
+            <div class=col-lg-2>
+                <div class="form-group">
+                    {%render_field form.dateFrom class="form-control" placeholder="Date From" type="date"%}
+                </div>
+            </div>
+            <div class=col-lg-2>
+                <div class="form-group">
+                    {%render_field form.dateTo class="form-control" placeholder="Date From" type="date"%}
+                </div>
+            </div>
+        </div>
+        <form method="GET">
+            <div class="row">
+                
+                <div class=col-lg-3>
+                    <div class="form-group">
+                        <label>Select Item:</label>
+                        {%render_field form.item class="form-control" placeholder="Select Area" type="location"%}
+                    </div>
+                </div>  
+            </div>
+            <div class="row">
+                <div class="col-lg-1">
+                    <input type="submit" value="OK" class="btn btn-primary btn-user btn-block">
+                </div>
+            </div>
+        </form>
+        <br>
+        <div class="row">
+            {% include 'farmercoupon/charts.html' %}
+        </div>
+    </div>
+{% endblock content %}
+
+    

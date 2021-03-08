@@ -1,0 +1,13 @@
+{% extends 'farmercoupon/base.html' %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+{% block content %}
+    <div class="container-fluid">
+    <h3>Create a coupon</h1>
+    {% csrf_token %}
+    {% crispy form %}
+    {% include 'farmercoupon/coupon_tables.html' %}
+    </div>
+    
+{% endblock content %}
+    

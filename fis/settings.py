@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'is.apps.IsConfig',
+    'farmercoupon.apps.FarmercouponConfig',
     'widget_tweaks',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'rest_framework'
+    'rest_framework',
+    'django_rename_app'
 ]
 
 MIDDLEWARE = [
