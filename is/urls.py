@@ -14,5 +14,5 @@ urlpatterns = [
     path('manageproducts',views.manageProducts,name='manageproducts'),
     path('salesview',views.salesView,name='salesview'),
     #ApiView    
-    path('api/sales',views.SalesReportApi,name='getsales'),
+    # path('api/sales',views.SalesReportApi,name='getsales'),
 ]
