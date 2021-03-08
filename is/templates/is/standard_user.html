@@ -1,5 +1,7 @@
 {% extends 'is/base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
+
 <div id="content-wrapper" class="d-flex flex-column">
     <!-- Main Content -->
     <div id="content">
@@ -103,8 +105,7 @@
                                     Bootstrap framework, especially the utility classes.</p> -->
                             <form method="POST">
                                 {% csrf_token %}
-                                {{form}}
-                                <input type="submit" value="Submit coupon" />
+                                {%crispy form%}
                             </form>
                         </div>
                     </div>

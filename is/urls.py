@@ -12,4 +12,7 @@ urlpatterns = [
     path('manageusers',views.manageUsers,name='manageusers'),
     path('managecoupons',views.manageCoupons,name='managecoupons'),
     path('manageproducts',views.manageProducts,name='manageproducts'),
+    path('salesview',views.salesView,name='salesview'),
+    #ApiView    
+    path('api/sales',views.SalesReportApi,name='getsales'),
 ]

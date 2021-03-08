@@ -2,11 +2,23 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Province(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Municipality(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
 class Farmer(models.Model):
     user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     standard_ticket = models.IntegerField(default=0)
     golden_ticket = models.IntegerField(default=0)
-
+    province = models.ForeignKey(Province,on_delete=models.SET_NULL,blank=True,null=True)
+    municipality = models.ForeignKey(Municipality,on_delete=models.SET_NULL,blank=True,null=True)
     def __str__(self):
         return self.user.first_name
 
@@ -54,6 +66,8 @@ class Purchase(models.Model):
     item = models.ForeignKey(Product,on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
     purchase_date = models.DateTimeField(auto_now=True)
+
+
 
 
     

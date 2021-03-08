@@ -1,12 +1,20 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm
+from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
-from . models import Farmer,Coupon,Product
+from . models import Farmer,Coupon,Product,Purchase,SalesLady
 from django.contrib.auth.models import User,Group
 from . generate_random_coupon import generate_coupon_code
+from django.http import JsonResponse
+
+#django rest framework
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+
+
 # Create your views here.
 
 
@@ -61,6 +69,7 @@ def userPage(request):
         form = ApplyCouponForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
+            saleslady = SalesLady.objects.get(pk=int(form.cleaned_data['saleslady']))
             try:
                 coupon = Coupon.objects.get(code__iexact=code,
                     is_used=False,
@@ -69,7 +78,6 @@ def userPage(request):
                 request.session['coupon_id'] = coupon.id
                 coupon.farmer = request.user.farmer
                 farmer = request.user.farmer
-                saleslady = coupon.saleslady
                 #Check if golden ticket
                 if(coupon.is_golden_ticket):
                     farmer.golden_ticket+=1
@@ -77,14 +85,19 @@ def userPage(request):
                 else:
                     farmer.standard_ticket+=coupon.item.ticket_value
                     saleslady.standard_ticket+=coupon.item.ticket_value
+                #if coupon is applied add a purchase for the farmer
+                purchase = Purchase(farmer=farmer,coupon=coupon,item=coupon.item,saleslady=saleslady)
+                purchase.save()
                 coupon.is_used = True
                 farmer.save()
                 saleslady.save()
+                coupon.saleslady = saleslady
                 coupon.save()
                 messages.success(request,'Successfully submitted ticket')
+                return redirect('user')
             except Coupon.DoesNotExist:
                 request.session['coupon_id'] = None
-                messages.error(request,'Coupon does not exist')
+                messages.error(request,'Coupon does not exist')         
     return render(request,'is/standard_user.html',{'form':form})
     
 @admin_only
@@ -101,7 +114,6 @@ def manageUsers(request):
 def manageCoupons(request):
     form = GenerateCouponForm(request.POST or None)
     coupon_list = Coupon.objects.order_by('-date_created')
-    
     if request.method == 'POST':
         if form.is_valid():
             count = request.POST.get('count')
@@ -131,3 +143,25 @@ def manageProducts(request):
         'products':products
     }
     return render(request,'is/manage_products.html',context)
+
+@admin_only
+def salesView(request): 
+    form = SalesReportForm()
+    context = {
+        'form':form,
+    }   
+    return render(request,'is/sales_reports.html',context)
+         
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def SalesReportApi(request):
+    purchase = Purchase.objects.count()
+    labels = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
+    defaultData = [1,2,3,4,5,6,7,8,9,10,11,12]
+    data = {
+            'purchase': purchase,
+            'labels':labels,
+            'defaultData':defaultData
+        }
+    return Response(data)
+    
