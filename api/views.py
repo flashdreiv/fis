@@ -5,16 +5,26 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
+from farmercoupon.models import Purchase
+from django.db.models import Sum
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAdminUser])
-def SalesReportApi(request):
-    item = request.GET.get('item')
-    labels = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
-    defaultData = [1,2,3,4,5,6,7,8,9,10,11,12]
-    data = {
+def SalesReportApi(request):    
+    if request.method == "POST":
+        total_sales = 0
+        dateFrom = request.POST.get('dateFrom')
+        dateTo = request.POST.get('dateTo')
+        item = request.POST.get('item')
+        total_sales_object = Purchase.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo)
+        for purchase in total_sales_object:
+            total_sales += purchase.item.price
+        labels = ["January"]
+        defaultData = [total_sales]
+        print(total_sales)
+        data = {
             'labels':labels,
             'defaultData':defaultData,
             'item':item
-        }
+            }
     return Response(data)

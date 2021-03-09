@@ -34,9 +34,14 @@ class SalesLady(models.Model):
 class Product(models.Model):
     category = (
         ('1','Y+ Package'),
-        ('2','Aljay Seeds'),
-        ('3','Aljay Chemicals'),
-        ('4','Aljay Fertilizer')
+        ('2','Aljay Biotech'),
+        ('3','Premium Grade Fertilizers'),
+        ('4','Aljay Hybrid Seed'),
+        ('5','Fungicide'),
+        ('6','Herbicide'),
+        ('7','Insecticide'),
+        ('8','Molluscicide'),
+        ('9','Foliar Fertilizers'),
     )
     item_name = models.CharField(max_length=50)
     ticket_value = models.IntegerField(default=0)
@@ -65,7 +70,7 @@ class Purchase(models.Model):
     saleslady = models.ForeignKey(SalesLady,on_delete=models.SET_NULL,null=True,blank=True)
     item = models.ForeignKey(Product,on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
-    purchase_date = models.DateTimeField(auto_now=True)
+    purchase_date = models.DateField(auto_now=True)
 
 
 

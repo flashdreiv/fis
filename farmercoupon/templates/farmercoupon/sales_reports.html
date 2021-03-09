@@ -2,25 +2,24 @@
 {% load widget_tweaks %}
 {% block content %}
     <div class='container-fluid'>
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Sales Per Item</h3>
-            </div>
-            <div class=col-lg-2>
-                <div class="form-group">
-                    {%render_field form.dateFrom class="form-control" placeholder="Date From" type="date"%}
-                </div>
-            </div>
-            <div class=col-lg-2>
-                <div class="form-group">
-                    {%render_field form.dateTo class="form-control" placeholder="Date From" type="date"%}
-                </div>
-            </div>
-        </div>
-        <form method="GET">
+        <form id="generateSales">
+            {% csrf_token %}
             <div class="row">
-                
+                <div class="col-lg-12">
+                    <h3>Sales Per Item</h3>
+                </div>
+                <div class=col-lg-2>
+                    <div class="form-group">
+                        {%render_field form.dateFrom autofocus="" required="" class="form-control form-control-user" placeholder="Date From" type="date"%}
+                    </div>
+                </div>
+                <div class=col-lg-2>
+                    <div class="form-group">
+                        {%render_field form.dateTo required="" class="form-control" placeholder="Date From" type="date"%}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class=col-lg-3>
                     <div class="form-group">
                         <label>Select Item:</label>
