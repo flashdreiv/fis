@@ -89,9 +89,9 @@ function buildGraph(){
                         }],
                         yAxes: [{
                             ticks: {
-                                min: 0,
-                                max: 100000,
-                                maxTicksLimit: 40000,
+                                min: 10000,
+                                max: 30000,
+                                maxTicksLimit: 10,
                                 padding: 10,
                                 // Include a dollar sign in the ticks
                                 callback: function (value, index, values) {

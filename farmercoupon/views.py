@@ -4,10 +4,10 @@ from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm,Sal
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
-from . models import Farmer,Coupon,Product,Purchase,SalesLady
+from . models import Farmer,Coupon,Product,SalesLady
 from django.contrib.auth.models import User,Group
 from . generate_random_coupon import generate_coupon_code
-from django.http import JsonResponse
+from datetime import date
 
 #django rest framework
 # from rest_framework.decorators import api_view,permission_classes
@@ -89,6 +89,7 @@ def userPage(request):
                 purchase = Purchase(farmer=farmer,coupon=coupon,item=coupon.item,saleslady=saleslady)
                 purchase.save()
                 coupon.is_used = True
+                coupon.purchase_date = date.today()
                 farmer.save()
                 saleslady.save()
                 coupon.saleslady = saleslady
@@ -152,18 +153,4 @@ def salesView(request):
     }   
     return render(request,'farmercoupon/sales_reports.html',context)
          
-# @api_view(["GET"])
-# @permission_classes([IsAdminUser])
-# def SalesReportApi(request):
-#     purchase = Purchase.objects.count()
-#     item = request.GET.get('item')
-#     labels = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
-#     defaultData = [1,2,3,4,5,6,7,8,9,10,11,12]
-#     data = {
-#             'purchase': purchase,
-#             'labels':labels,
-#             'defaultData':defaultData,
-#             'item':item
-#         }
-#     return Response(data)
     
