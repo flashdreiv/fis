@@ -1,8 +1,12 @@
 from datetime import datetime
 
-def get_month_list(purchases):
-    months = []
+def get_purchase_list(purchases):
+    data = {}
     for purchase in purchases:
-        months.append(str(purchase.purchase_date.strftime('%B')))
-    months = list(dict.fromkeys(months))
-    return months
+        key = str(purchase.purchase_date.strftime('%B')) 
+        if key in data:
+            data[key] += purchase.item.price
+        else:
+            data[key] = purchase.item.price
+    print(data)
+    return data     

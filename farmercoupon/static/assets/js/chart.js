@@ -51,6 +51,7 @@ $(document).on('submit','#generateSales',function(e){
 
 function buildGraph(){
     var ctx = document.getElementById("myBarChart");
+           
             var myBarChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -90,7 +91,7 @@ function buildGraph(){
                         yAxes: [{
                             ticks: {
                                 min: 10000,
-                                max: 30000,
+                                max: 100000,
                                 maxTicksLimit: 10,
                                 padding: 10,
                                 // Include a dollar sign in the ticks
@@ -132,5 +133,4 @@ function buildGraph(){
                 }
             });
 }
-
 
