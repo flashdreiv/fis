@@ -9,9 +9,13 @@ urlpatterns = [
     path('login',views.loginPage,name='login'),
     path('logout',views.logOutUser,name='logout'),
     path('user',views.userPage,name='user'),
+    
     path('manageusers',views.manageUsers,name='manageusers'),
     path('managecoupons',views.manageCoupons,name='managecoupons'),
     path('manageproducts',views.manageProducts,name='manageproducts'),
     path('salesview',views.salesView,name='salesview'),
+    #Sales lady views
+    path('saleslady',views.salesladyView,name='saleslady'),
+    path('viewcoupons',views.viewCoupons,name='viewcoupons'),
 
 ]

@@ -28,3 +28,18 @@ def SalesReportApi(request):
             'item':item
             }
     return Response(data)
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def adminDashboard():
+    data = {}
+    purchases = Coupon.objects.exclude(item__gt=3)
+    for purchase in purchases:
+        if key in data:
+            data[key] += purchase.item.price
+        else:
+            data[key] = purchase.item.price 
+    revenue_list = []
+    for key in data:
+        revenue_list.append(data[key])
+    return response(revenue_list)

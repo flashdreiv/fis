@@ -44,7 +44,6 @@ class Product(models.Model):
         ('9','Foliar Fertilizers'),
     )
     item_name = models.CharField(max_length=50)
-    ticket_value = models.IntegerField(default=0)
     item_category = models.CharField(max_length=50,choices=category,null=True)
     price = models.FloatField(default=0.0)
     is_active = models.BooleanField(default=True)
@@ -52,13 +51,13 @@ class Product(models.Model):
         return self.item_name
 
 class Coupon(models.Model):
-    item = models.ForeignKey(Product,on_delete=models.CASCADE)
+    item = models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
+    ticket_value = models.IntegerField(default=0)
     farmer = models.ForeignKey(Farmer,on_delete=models.SET_NULL,null=True,blank=True)
     saleslady = models.ForeignKey(SalesLady,on_delete=models.SET_NULL,null=True,blank=True)
     code = models.CharField(max_length=15,unique=True,default=0)
     is_golden_ticket=models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    is_used = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
     purchase_date = models.DateField(null=True,blank=True)
 

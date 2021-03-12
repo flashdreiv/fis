@@ -9,6 +9,8 @@ def unauthenticated_user(view_func):
             group = request.user.groups.all()[0].name
         if group == 'admin': 
            return redirect('admin')
+        if group == 'saleslady': 
+           return redirect('saleslady')
         if request.user.is_authenticated:
             return redirect('user')
         else:
@@ -35,6 +37,8 @@ def admin_only(view_func):
             group = request.user.groups.all()[0].name
         if group == 'admin': 
            return view_func(request, *args,**kwargs)
+        if group == 'saleslady': 
+           return redirect('saleslady')
         else:
             return redirect('user')
     return wrapper_func

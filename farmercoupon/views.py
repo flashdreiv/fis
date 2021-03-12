@@ -9,10 +9,7 @@ from django.contrib.auth.models import User,Group
 from . generate_random_coupon import generate_coupon_code
 from datetime import date
 
-#django rest framework
-# from rest_framework.decorators import api_view,permission_classes
-# from rest_framework.permissions import IsAdminUser
-# from rest_framework.response import Response
+from django.db.models import Sum
 
 
 # Create your views here.
@@ -21,7 +18,21 @@ from datetime import date
 @login_required(login_url='login')
 @admin_only
 def adminView(request):
-    return render(request,'farmercoupon/admin.html')
+    total_sales = 0
+    total_golden_ticket = 0
+    context = {}
+    try:
+        purchases = Coupon.objects.exclude(farmer__isnull=True)
+        total_golden_ticket = Coupon.objects.aggregate(Sum('is_golden_ticket'))
+        for purchase in purchases:
+            total_sales += purchase.item.price
+    except:
+        pass
+    context = {
+        'total_sales':int(total_sales) ,
+        'total_golden_ticket':total_golden_ticket['is_golden_ticket__sum']
+    }
+    return render(request,'farmercoupon/admin.html',context)
 
 @unauthenticated_user
 def register(request):
@@ -86,9 +97,9 @@ def userPage(request):
                     farmer.standard_ticket+=coupon.item.ticket_value
                     saleslady.standard_ticket+=coupon.item.ticket_value
                 #if coupon is applied add a purchase for the farmer
-                purchase = Purchase(farmer=farmer,coupon=coupon,item=coupon.item,saleslady=saleslady)
-                purchase.save()
-                coupon.is_used = True
+                # purchase = Purchase(farmer=farmer,coupon=coupon,item=coupon.item,saleslady=saleslady)
+                # purchase.save()
+                # coupon.is_used = True
                 coupon.purchase_date = date.today()
                 farmer.save()
                 saleslady.save()
@@ -119,16 +130,20 @@ def manageCoupons(request):
         if form.is_valid():
             count = request.POST.get('count')
             count = int(count)
-            item_id = request.POST.get('item')
+            # item_id = request.POST.get('item')
+            ticket_value = request.POST.get('ticket_value')
             for x in range(count):
                 coupon = Coupon()
-                coupon.item = Product.objects.get(pk=item_id)
-                if coupon.item.pk == 3 or coupon.item.pk == 4 or coupon.item.pk == 5:
+                # coupon.item = Product.objects.get(pk=item_id)
+                # if coupon.item.pk == 3 or coupon.item.pk == 4 or coupon.item.pk == 5:
+                #     coupon.is_golden_ticket = True
+                if int(ticket_value) > 14:
                     coupon.is_golden_ticket = True
-                code = generate_coupon_code()
-                coupon.code = code
+                coupon.ticket_value = ticket_value   
+                coupon.code = generate_coupon_code()
                 coupon.save()
-            messages.success(request,f'Generated a total of {count} coupon for {coupon.item.item_name}')
+            messages.success(request,f'Generated a total of {count} coupon for a ticket value of {coupon.ticket_value}')
+            return redirect('managecoupons')
         else:
             form = GenerateCouponForm()
     context = {
@@ -152,5 +167,35 @@ def salesView(request):
         'form':form,
     }   
     return render(request,'farmercoupon/sales_reports.html',context)
+
+@login_required
+@allowed_users(allowed_roles=['saleslady'])
+def salesladyView(request):
+    saleslady = request.user.saleslady
+    total_sales = 0
+    try:
+        sales = Coupon.objects.filter(saleslady=saleslady)
+        for sale in sales:
+            total_sales += sales.item.price | 0
+    except:
+        total_sales = 0
+    context = {
+        'sales':total_sales
+    }
+    return render(request,'farmercoupon/saleslady_user.html',context)
+    
+@login_required
+@allowed_users(allowed_roles=['saleslady'])
+def viewCoupons(request):
+    saleslady = request.user.saleslady
+    total_sales = 0
+    try:
+        sales = Coupon.objects.filter(saleslady=saleslady)
+    except:
+        total_sales = 0
+    context = {
+        'coupons':sales
+    }
+    return render(request,'farmercoupon/saleslady_view_coupons.html',context)
          
     

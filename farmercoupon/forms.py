@@ -29,19 +29,21 @@ class ApplyCouponForm(forms.Form):
     saleslady_list = [
         (saleslady.pk,saleslady.user.first_name + ' '+saleslady.user.last_name) for saleslady in SalesLady.objects.all()
     ]
+    product_list = [
+        (product.pk,product.item_name) for product in Product.objects.all()
+    ]
     code = forms.CharField(required=True)
     saleslady = forms.ChoiceField(required=True,choices=saleslady_list)
+    item = forms.ChoiceField(required=True,choices=product_list)
     helper = FormHelper()
     helper.add_input(Submit('submit', 'Submit Coupon', css_class='btn-primary'))
 
 class GenerateCouponForm(forms.Form):
-    product_list = [
-        (product.pk,product.item_name) for product in Product.objects.all()
-    ]
     helper = FormHelper()
     helper.add_input(Submit('submit', 'Generate Coupon', css_class='btn-primary'))
     count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)')
-    item = forms.ChoiceField(choices=product_list,label="Item for coupon")
+    ticket_value = forms.IntegerField(min_value=1,max_value=20,label='Enter ticket value',required=True)
+    # item = forms.ChoiceField(choices=product_list,label="Item for coupon")
 
 class SalesReportForm(forms.Form):
     product_list = [

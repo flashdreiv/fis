@@ -11,11 +11,11 @@
         
             
         <!-- Sidebar -->
-        {% if request.user.is_superuser %}
-            {% include 'farmercoupon/sidebar.html' %}
-        {% endif %}
-        <!-- End of Sidebar -->
         
+        {% if user.is_authenticated %}
+            {% include 'farmercoupon/sidebar.html' %}
+        <!-- End of Sidebar -->
+        {% endif %}
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->

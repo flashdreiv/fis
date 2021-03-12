@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   $(document).ready(function() {
     $('#productTable').DataTable( {
-      "order": [[ 3, "desc" ]]
+      "order": [[ 3, "desc" ]],
   } );
 });
   

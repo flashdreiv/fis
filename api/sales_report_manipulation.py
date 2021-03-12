@@ -8,5 +8,4 @@ def get_purchase_list(purchases):
             data[key] += purchase.item.price
         else:
             data[key] = purchase.item.price
-    print(data)
     return data     
