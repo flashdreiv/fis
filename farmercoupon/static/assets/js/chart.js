@@ -31,25 +31,15 @@ var defaultData = []
 var labels = []
 var max_val,min_val
 
-$( document ).ready(function() {
-    $.ajax({
-        method: "GET",
-        url: endpoint,
-        data:{
-            // must be the input id
-            dateFrom: $('#id_dateFrom').val(),
-            dateTo: $('#id_dateTo').val(),
-            item: $('#id_item').val(),
-            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-        },
-        success: function (res) {
-            labels = res.labels
-            defaultData = res.defaultData
-            max_val = defaultData.sort()[0]
-            min_val = defaultData.sort()[defaultData.length-1]
-            fuck = buildChart()
-        }
-    })
+$(document).ready(function() {
+    // $.ajax({
+    //     method: "GET",
+    //     url: "api/revenue/",
+    //     success: function (res) {
+    //         defaultData = res.revenue
+    //         buildPieChart()
+    //     }
+    // })
 });
 
 $(document).on('submit','#generateSales',function(e){
@@ -163,7 +153,6 @@ function buildChart(){
 }
 
 // Pie Chart Example
-
 function buildPieChart(){
     // Set new default font family and font color to mimic Bootstrap's default styling
     Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
@@ -172,9 +161,9 @@ function buildPieChart(){
     var myPieChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ["Direct", "Referral", "Social"],
+        labels: ["Rice Premiere", "Rice Basic", "Corn Basic"],
         datasets: [{
-          data: [55, 30, 15],
+          data: defaultData,
           backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
           hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
           hoverBorderColor: "rgba(234, 236, 244, 1)",

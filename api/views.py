@@ -5,9 +5,9 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
-from farmercoupon.models import Coupon,Product
+from farmercoupon.models import Coupon
 from django.db.models import Sum
-from . sales_report_manipulation import get_purchase_list
+from . sales_report_manipulation import get_purchase_list,get_purchase_list_item
 
 @api_view(["POST"])
 @permission_classes([IsAdminUser])
@@ -31,15 +31,16 @@ def SalesReportApi(request):
 
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
-def adminDashboard():
-    data = {}
-    purchases = Coupon.objects.exclude(item__gt=3)
-    for purchase in purchases:
-        if key in data:
-            data[key] += purchase.item.price
-        else:
-            data[key] = purchase.item.price 
+def revenue(request):
     revenue_list = []
-    for key in data:
-        revenue_list.append(data[key])
-    return response(revenue_list)
+    try:
+        purchases = Coupon.objects.filter(item__lte=5)
+        data = get_purchase_list_item(purchases)
+        for key in data:
+            revenue_list.append(data[key])
+    except:
+        revenue_list = []
+    data = {
+        'revenue':revenue_list
+    }
+    return Response(data)

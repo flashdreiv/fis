@@ -1,7 +1,9 @@
 {% extends 'farmercoupon/base.html' %}
 {% block content %}
+{% include 'farmercoupon/navbar.html' %}
     <div class="container-fluid">
     <h3>View coupon</h1>
+        <br>
         {% include 'farmercoupon/coupon_tables.html' %}
     </div>
 {% endblock content %}

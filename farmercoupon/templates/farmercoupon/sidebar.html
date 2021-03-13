@@ -57,6 +57,11 @@
             <span>Manage Coupons</span></a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="{% url 'blocoupons' %}">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Big Land Owner</span></a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="{% url 'manageproducts' %}">
             <i class="fas fa-dolly-flatbed"></i>
             <span>Manage Products</span></a>
@@ -70,17 +75,15 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Reports:</h6>
-                <a class="collapse-item" href="{% url 'salesview' %}">Sales Reports</a>
+                <a class="collapse-item" href="{% url 'salesview' %}">Sales Per Item</a>
+                <a class="collapse-item" href="{% url 'salesview' %}">Sales Per Category</a>
                 <a class="collapse-item" href="cards.html">Coupon Reports</a>
             </div>
         </div>
     </li>
     {% endif %}
     
-    
-        
-        
-    
+       
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

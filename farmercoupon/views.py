@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm
+from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm,ApplyCouponFormBlo
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
@@ -10,7 +10,7 @@ from . generate_random_coupon import generate_coupon_code
 from datetime import date
 
 from django.db.models import Sum
-
+from globe.connect import oauth
 
 # Create your views here.
 
@@ -20,18 +20,22 @@ from django.db.models import Sum
 def adminView(request):
     total_sales = 0
     total_golden_ticket = 0
+    total_ticket = 0
     context = {}
     try:
         purchases = Coupon.objects.exclude(farmer__isnull=True)
-        total_golden_ticket = Coupon.objects.aggregate(Sum('is_golden_ticket'))
+        total_golden_ticket = Coupon.objects.filter(farmer__isnull=False,is_golden_ticket=True).count()
+        total_ticket = Coupon.objects.filter(farmer__isnull=False,is_golden_ticket=False).count()
         for purchase in purchases:
             total_sales += purchase.item.price
     except:
         pass
     context = {
-        'total_sales':int(total_sales) ,
-        'total_golden_ticket':total_golden_ticket['is_golden_ticket__sum']
+        'total_sales':int(total_sales),
+        'total_ticket':total_ticket,
+        'total_golden_ticket':total_golden_ticket
     }
+    print(total_ticket)
     return render(request,'farmercoupon/admin.html',context)
 
 @unauthenticated_user
@@ -197,5 +201,35 @@ def viewCoupons(request):
         'coupons':sales
     }
     return render(request,'farmercoupon/saleslady_view_coupons.html',context)
+
+@login_required
+@admin_only
+def manageBlo(request):
+    form = ApplyCouponFormBlo()
+    if request.method == "POST":
+        if form_is_valid():
+            saleslady = request.POST.get('saleslady')
+            farmer = request.POST.get('farmer')
+            item = request.POST.get('item')
+            ticket_value = request.POST.get('ticket_value')
+            count = request.POST.get('count')
+            for x in count:
+                coupon = Coupon.objects.bulk_create(code=generate_coupon_code(),saleslady=saleslady,farmer=farmer,item=item,ticket_value=ticket_value)
+            coupon.save()
+            message.success(f'Coupon applied to {coupon.farmer.user.first_name}')
+        else:
+            messages.error(request,'Failed to apply coupon')
+    context = {
+        'form': form,
+    }
+    return render(request,'farmercoupon/manage_coupons.html',context)
          
+def viewSms(request):
+    auth = oauth.Oauth("6GoBCE4MMeCp5ir5zdcMnGC8kGjnC4jj", "5dd3199550d21e5ce5120c7ebf612b9518b84869945b5333d51a6aae59783c17")
+    # get redirect url
+    print(auth.getRedirectUrl())
+    # get access token
+    print (auth.getAccessToken("21587517"))
+
+    return render(request,'farmercoupon/sms.html')
     

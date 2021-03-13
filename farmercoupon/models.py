@@ -19,6 +19,7 @@ class Farmer(models.Model):
     golden_ticket = models.IntegerField(default=0)
     province = models.ForeignKey(Province,on_delete=models.SET_NULL,blank=True,null=True)
     municipality = models.ForeignKey(Municipality,on_delete=models.SET_NULL,blank=True,null=True)
+    is_blo = models.BooleanField(default=False)
     def __str__(self):
         return self.user.first_name
 
