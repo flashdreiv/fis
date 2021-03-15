@@ -10,7 +10,16 @@ from . generate_random_coupon import generate_coupon_code
 from datetime import date
 
 from django.db.models import Sum
-from globe.connect import oauth
+
+#Twilio account
+from twilio.rest import Client
+from twilio.twiml.messaging_response import MessagingResponse
+
+TWILIO_ACCOUNT_SID = "ACe2d4e2cdcf998f3d5766dfcaaf3b9a0b"
+TWILIO_AUTH_TOKEN = "627315a50794e5b59adb81b7ce49c4ff"
+
+client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
+
 
 # Create your views here.
 
@@ -225,11 +234,8 @@ def manageBlo(request):
     return render(request,'farmercoupon/manage_coupons.html',context)
          
 def viewSms(request):
-    auth = oauth.Oauth("6GoBCE4MMeCp5ir5zdcMnGC8kGjnC4jj", "5dd3199550d21e5ce5120c7ebf612b9518b84869945b5333d51a6aae59783c17")
-    # get redirect url
-    print(auth.getRedirectUrl())
-    # get access token
-    print (auth.getAccessToken("21587517"))
-
+    # client.messages.create(from_='+15108172133',body='Hello there dreivan',to='+639177015505')
+    resp = MessagingResponse()
+    print(resp)
     return render(request,'farmercoupon/sms.html')
     

@@ -26,7 +26,7 @@ SECRET_KEY = '8_ns6vn)%(%k4v_$pgrbv5spk0p)h0f6#_7vew#6(ow9$gorc('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['7fbad6d6e05b.ngrok.io','127.0.0.1']
 
 
 # Application definition
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'rest_framework',
-    'django_rename_app'
+    'django_rename_app',
+
 ]
 
 MIDDLEWARE = [

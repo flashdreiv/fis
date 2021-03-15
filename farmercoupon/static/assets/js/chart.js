@@ -44,7 +44,6 @@ $(document).ready(function() {
 
 $(document).on('submit','#generateSales',function(e){
     e.preventDefault();
-    
     $.ajax({
         method: "POST",
         url: endpoint,
