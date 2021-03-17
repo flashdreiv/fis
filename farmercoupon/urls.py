@@ -19,6 +19,5 @@ urlpatterns = [
     path('viewcoupons',views.viewCoupons,name='viewcoupons'),
     #Big land owner views
     path('blocoupons',views.manageBlo,name='blocoupons'),
-    # SMS View
-    path('sms',views.viewSms,name='sms'),
+   
 ]

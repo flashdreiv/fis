@@ -44,3 +44,11 @@ def revenue(request):
         'revenue':revenue_list
     }
     return Response(data)
+
+@api_view(["POST"])
+def viewSms(request):
+    inbound_sms = {}
+    if request.method == "POST":    
+        inbound_sms = request.POST.get('inboundSMSMessageList')
+        print(inbound_sms)
+    return Response(inbound_sms)

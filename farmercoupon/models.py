@@ -23,6 +23,7 @@ class Farmer(models.Model):
     def __str__(self):
         return self.user.first_name
 
+
 class SalesLady(models.Model):
     user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     branch_name = models.CharField(max_length=15)
@@ -46,7 +47,7 @@ class Product(models.Model):
     )
     item_name = models.CharField(max_length=50)
     item_category = models.CharField(max_length=50,choices=category,null=True)
-    price = models.FloatField(default=0.0)
+    price = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.item_name
