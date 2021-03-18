@@ -1,10 +1,6 @@
 import requests,json
 
-access_token = "2RZVZRABtcYrCSFQw_ouRXu1xXNi318bGbwRLbnyKGM"
-APP_ID = "6GoBCE4MMeCp5ir5zdcMnGC8kGjnC4jj"
-APP_SECRET = "5dd3199550d21e5ce5120c7ebf612b9518b84869945b5333d51a6aae59783c17"
-CODE = "yHRpLEaFoGpyjUzBR5AsxKxEKFRyakzSjg4njtdX4GyC7rqrdHkLz8xhj9r4kUaBEg5Ian4n7hzRLrkIBMdpMIbegaBCqGagLszAebBC8kG54Uajno7FxdBEoC7kiRoyB7XTB8GCdXnqdF49G4aUXMe96CBda8EsABggrC7bdkdIBxLjdIep4qAh9xEgaI8jrkEUxyz5AhgEq9GH8j4KXCX64aqt47a7ESp9xk7FroR4BsLAp9AUMeL5kFMLdzEH"
-SHORT_CODE ="7517"
+
 
 class Globe:
     def __init__(self,app_id,app_secret,code,short_code):

@@ -222,5 +222,6 @@ def manageBlo(request):
     }
     return render(request,'farmercoupon/manage_coupons.html',context)
          
-
+def viewSms(request):
+    return render(request,'farmercoupon/sms.html')
     
