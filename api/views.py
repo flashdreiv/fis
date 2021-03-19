@@ -9,7 +9,7 @@ from farmercoupon.models import Coupon
 from django.db.models import Sum
 from . sales_report_manipulation import get_purchase_list,get_purchase_list_item
 from . globe import Globe
-
+from ph_locations . models import Region,Province,City,Barangay
 #Globe API
 APP_ID = "6GoBCE4MMeCp5ir5zdcMnGC8kGjnC4jj"
 APP_SECRET = "5dd3199550d21e5ce5120c7ebf612b9518b84869945b5333d51a6aae59783c17"
@@ -67,3 +67,24 @@ def registerNumber(request):
     globe = Globe(APP_ID,APP_SECRET,CODE,SHORT_CODE)
     data = globe.getAccessToken()
     return Response(data)
+
+@api_view(["POST"])
+def loadProvinces(request):
+    if request.method == "POST":    
+        region_id = request.POST.get('id_region')
+        province = Province.objects.filter(region_id=region_id)
+    return Response(list(province.values('id','name')))
+
+@api_view(["POST"])
+def loadCities(request):
+    if request.method == "POST":    
+        province_id = request.POST.get('id_province')
+        city = City.objects.filter(province_id=province_id)
+    return Response(list(city.values('id','name')))
+
+@api_view(["POST"])
+def loadBarangays(request):
+    if request.method == "POST":    
+        city_id = request.POST.get('id_city')
+        barangays = Barangay.objects.filter(city_id=city_id)
+    return Response(list(barangays.values('id','name')))

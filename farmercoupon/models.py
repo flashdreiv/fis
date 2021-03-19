@@ -1,32 +1,26 @@
 from django.db import models
-from django.contrib.auth.models import User
-
+from django.contrib.auth.models import User,Group
+from ph_locations.models import Region,Province,City,Barangay
 # Create your models here.
-class Province(models.Model):
-    name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.name
-
-class Municipality(models.Model):
-    name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.name
 
 class Farmer(models.Model):
-    user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50,null=True,blank=True)
+    last_name = models.CharField(max_length=50,null=True,blank=True)
+    mobile_number = models.CharField(max_length=12,null=True,blank=True,unique=True)
     standard_ticket = models.IntegerField(default=0)
     golden_ticket = models.IntegerField(default=0)
-    province = models.ForeignKey(Province,on_delete=models.SET_NULL,blank=True,null=True)
-    municipality = models.ForeignKey(Municipality,on_delete=models.SET_NULL,blank=True,null=True)
-    is_blo = models.BooleanField(default=False)
+    region = models.ForeignKey(Region,on_delete=models.CASCADE,null=True)
+    province = models.ForeignKey(Province,on_delete=models.CASCADE,null=True)
+    city = models.ForeignKey(City,on_delete=models.CASCADE,null=True)
+    barangay = models.ForeignKey(Barangay,on_delete=models.CASCADE,null=True)
+    groups = models.ForeignKey(Group,null=True,on_delete=models.CASCADE)
     def __str__(self):
-        return self.user.first_name
-
+        return self.first_name + ' ' + self.last_name
 
 class SalesLady(models.Model):
     user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
-    branch_name = models.CharField(max_length=15)
+    branch_name = models.CharField(max_length=30)
     standard_ticket = models.IntegerField(default=0)
     golden_ticket = models.IntegerField(default=0)
     

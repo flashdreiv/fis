@@ -1,5 +1,6 @@
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
+    
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
     </div>
@@ -25,10 +26,10 @@
                     {% for user in users %}
                     <tr>
                         <td>{{user.first_name}} {{user.last_name}}</td>
-                        <td>{{user.groups.get}}</td>
+                        <td>{{user.groups.name}}</td>
                         {% if user.farmer %}
-                        <td>{{user.farmer.standard_ticket}}</td>
-                        <td>{{user.farmer.golden_ticket}}</td>
+                        <td>{{user.standard_ticket}}</td>
+                        <td>{{user.golden_ticket}}</td>
                         {% endif %}
                         {% if user.saleslady %}
                         <td>{{user.saleslady.standard_ticket}}</td>

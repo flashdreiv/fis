@@ -15,6 +15,11 @@
  <script src="{% static 'assets/vendor/chart.js/Chart.min.js'%}"></script>
  <script src="{% static 'assets/js/chart.js'%}"></script>
 
+<!-- ph locations.js -->
+{% if user.is_superuser %}
+    <script src="{% static 'assets/js/ph-locations-scripts.js'%}"></script>
+    <script src="{% static 'assets/js/ph-locations.js'%}"></script>
+{% endif %}
  <!-- Data tables scripts -->
 <script src="{% static 'assets/vendor/datatables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'assets/vendor/datatables/dataTables.bootstrap4.min.js'%}"></script>

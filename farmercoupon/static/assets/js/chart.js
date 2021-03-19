@@ -32,14 +32,14 @@ var labels = []
 var max_val,min_val
 
 $(document).ready(function() {
-    // $.ajax({
-    //     method: "GET",
-    //     url: "api/revenue/",
-    //     success: function (res) {
-    //         defaultData = res.revenue
-    //         buildPieChart()
-    //     }
-    // })
+    $.ajax({
+        method: "GET",
+        url: "api/revenue/",
+        success: function (res) {
+            defaultData = res.revenue
+            buildPieChart()
+        }
+    })
 });
 
 $(document).on('submit','#generateSales',function(e){

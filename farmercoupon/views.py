@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from . forms import YFarmerForm,LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm,ApplyCouponFormBlo
+from . forms import LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm,ApplyCouponFormBlo,AddFarmerForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
@@ -37,22 +37,22 @@ def adminView(request):
     return render(request,'farmercoupon/admin.html',context)
 
 @unauthenticated_user
-def register(request):
-    if request.method == "POST":
-        form = YFarmerForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            group = Group.objects.get(name='farmer')
-            user.groups.add(group)
-            farmer = Farmer()
-            farmer.user = user
-            farmer.save()
-            messages.success(request,f'Account created for {username}!')
-            return redirect('login')
-    else:
-        form = YFarmerForm()
-    return render(request,'farmercoupon/register.html',{'form':form})
+# def register(request):
+#     if request.method == "POST":
+#         form = YFarmerForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             username = form.cleaned_data.get('username')
+#             group = Group.objects.get(name='farmer')
+#             user.groups.add(group)
+#             farmer = Farmer()
+#             farmer.user = user
+#             farmer.save()
+#             messages.success(request,f'Account created for {username}!')
+#             return redirect('login')
+#     else:
+#         form = YFarmerForm()
+#     return render(request,'farmercoupon/register.html',{'form':form})
 
 @unauthenticated_user
 def loginPage(request):
@@ -117,9 +117,21 @@ def userPage(request):
 @admin_only
 @login_required(login_url='login')
 def manageUsers(request):
-    users = User.objects.all().exclude(groups = 1)
+    farmer = Farmer()
+    farmerForm = AddFarmerForm()
+    if request.method == "POST":
+        farmerForm = AddFarmerForm(request.POST or None)
+        if farmerForm.is_valid():
+            farmerForm.save()
+            messages.success(request,"Farmer registered Successfully!")
+            return redirect('manageusers')
+        else:
+            messages.warning(request,farmerForm.errors)
+            return redirect('manageusers')
+    farmers = Farmer.objects.all()
     context = {
-        'users':users
+        'form':farmerForm,
+        'users':farmers
     }
     return render(request,'farmercoupon/manageUsers.html',context)
 
@@ -127,18 +139,14 @@ def manageUsers(request):
 @login_required(login_url='login')
 def manageCoupons(request):
     form = GenerateCouponForm(request.POST or None)
-    coupon_list = Coupon.objects.order_by('-date_created')
+    coupon_list = Coupon.objects.order_by('-date_created').exclude(farmer__isnull=False)
     if request.method == 'POST':
         if form.is_valid():
             count = request.POST.get('count')
             count = int(count)
-            # item_id = request.POST.get('item')
             ticket_value = request.POST.get('ticket_value')
             for x in range(count):
                 coupon = Coupon()
-                # coupon.item = Product.objects.get(pk=item_id)
-                # if coupon.item.pk == 3 or coupon.item.pk == 4 or coupon.item.pk == 5:
-                #     coupon.is_golden_ticket = True
                 if int(ticket_value) > 14:
                     coupon.is_golden_ticket = True
                 coupon.ticket_value = ticket_value   
@@ -203,25 +211,27 @@ def viewCoupons(request):
 @login_required
 @admin_only
 def manageBlo(request):
-    form = ApplyCouponFormBlo()
+    form = ApplyCouponFormBlo(request.POST or None)
     if request.method == "POST":
-        if form_is_valid():
-            saleslady = request.POST.get('saleslady')
-            farmer = request.POST.get('farmer')
-            item = request.POST.get('item')
+        if form.is_valid():
+            saleslady = SalesLady.objects.get(pk=request.POST.get('saleslady'))
+            farmer = Farmer.objects.get(pk=request.POST.get('farmer'))
+            item = Product.objects.get(pk=request.POST.get('item'))
             ticket_value = request.POST.get('ticket_value')
             count = request.POST.get('count')
             for x in count:
-                coupon = Coupon.objects.bulk_create(code=generate_coupon_code(),saleslady=saleslady,farmer=farmer,item=item,ticket_value=ticket_value)
+                coupon = Coupon.objects.create(code=generate_coupon_code(),saleslady=saleslady,farmer=farmer,item=item,ticket_value=ticket_value,purchase_date=date.today())
+                if coupon.item.item_category == '1':
+                    coupon.is_golden_ticket = True
             coupon.save()
-            message.success(f'Coupon applied to {coupon.farmer.user.first_name}')
+            messages.success(request,f'Coupon applied to {coupon.farmer.first_name}')
+            return redirect('blocoupons')
         else:
             messages.error(request,'Failed to apply coupon')
+    coupons = Coupon.objects.exclude(farmer__isnull=True)
     context = {
         'form': form,
+        'coupons':coupons
     }
     return render(request,'farmercoupon/manage_coupons.html',context)
          
-def viewSms(request):
-    return render(request,'farmercoupon/sms.html')
-    
