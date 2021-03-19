@@ -27,14 +27,8 @@
                     <tr>
                         <td>{{user.first_name}} {{user.last_name}}</td>
                         <td>{{user.groups.name}}</td>
-                        {% if user.farmer %}
                         <td>{{user.standard_ticket}}</td>
                         <td>{{user.golden_ticket}}</td>
-                        {% endif %}
-                        {% if user.saleslady %}
-                        <td>{{user.saleslady.standard_ticket}}</td>
-                        <td>{{user.saleslady.golden_ticket}}</td>
-                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

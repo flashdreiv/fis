@@ -13,8 +13,14 @@ class Farmer(models.Model):
     region = models.ForeignKey(Region,on_delete=models.CASCADE,null=True)
     province = models.ForeignKey(Province,on_delete=models.CASCADE,null=True)
     city = models.ForeignKey(City,on_delete=models.CASCADE,null=True)
-    barangay = models.ForeignKey(Barangay,on_delete=models.CASCADE,null=True)
+    barangay = models.ForeignKey(Barangay,on_delete=models.CASCADE,null=True,blank=True)
     groups = models.ForeignKey(Group,null=True,on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs): 
+       self.groups = Group.objects.get(pk=2)
+       super(Farmer, self).save(*args, **kwargs) 
+        
+
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 

@@ -67,22 +67,23 @@ class ApplyCouponFormBlo(forms.Form):
 class AddFarmerForm(forms.ModelForm):
     class Meta:
         model = Farmer
-        fields = ['first_name','last_name','mobile_number','region','province','city','barangay']
+        fields = ['first_name','last_name','mobile_number','region','province','city']
         
     def __init__(self, *args,**kwargs):
         super().__init__(*args,**kwargs)
+        
+        for field in self.fields:
+            self.fields[field].required = True
+
         self.fields['province'].queryset = Province.objects.none()
         self.fields['city'].queryset = City.objects.none()
-        self.fields['barangay'].queryset = Barangay.objects.none()
-
-        if 'province' and 'city' and 'barangay' in self.data:
+        if 'province' and 'city' in self.data:
             try:
                 region_id = int(self.data.get('region'))
                 province_id = int(self.data.get('province'))
                 city_id = int(self.data.get('city'))
                 self.fields['province'].queryset = Province.objects.filter(region_id=region_id).order_by('name')
                 self.fields['city'].queryset = City.objects.filter(province_id=province_id).order_by('name')
-                self.fields['barangay'].queryset = Barangay.objects.filter(city_id=city_id).order_by('name')
             except (ValueError,TypeError):
                 pass
             
