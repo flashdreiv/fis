@@ -26,7 +26,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     }
     return s.join(dec);
 }
-var endpoint = "api/sales/"
+var endpoint = "/api/sales/"
 var defaultData = []
 var labels = []
 var max_val,min_val
@@ -34,7 +34,7 @@ var max_val,min_val
 $(document).ready(function() {
     $.ajax({
         method: "GET",
-        url: "api/revenue/",
+        url: "/api/revenue/",
         success: function (res) {
             defaultData = res.revenue
             buildPieChart()

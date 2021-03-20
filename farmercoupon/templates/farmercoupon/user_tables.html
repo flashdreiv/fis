@@ -11,15 +11,21 @@
                     <tr>
                         <th>Name</th>
                         <th>User Type</th>
+                        <th>Mobile Number</th>
+                        <th>Province</th>
                         <th>Standard Ticket</th>
                         <th>Golden Ticket</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tfoot>
                         <th>Name</th>
                         <th>User Type</th>
+                        <th>Mobile Number</th>
+                        <th>Province</th>
                         <th>Standard Ticket</th>
                         <th>Golden Ticket</th>
+                        <th>Update</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -27,8 +33,11 @@
                     <tr>
                         <td>{{user.first_name}} {{user.last_name}}</td>
                         <td>{{user.groups.name}}</td>
+                        <td>{{user.mobile_number}}</td>
+                        <td>{{user.province}}</td>
                         <td>{{user.standard_ticket}}</td>
                         <td>{{user.golden_ticket}}</td>
+                        <td><a type="button" class="btn btn-primary" href="{% url 'editusers' user.id %}">Edit</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

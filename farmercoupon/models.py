@@ -10,10 +10,10 @@ class Farmer(models.Model):
     mobile_number = models.CharField(max_length=12,null=True,blank=True,unique=True)
     standard_ticket = models.IntegerField(default=0)
     golden_ticket = models.IntegerField(default=0)
-    region = models.ForeignKey(Region,on_delete=models.CASCADE,null=True)
-    province = models.ForeignKey(Province,on_delete=models.CASCADE,null=True)
-    city = models.ForeignKey(City,on_delete=models.CASCADE,null=True)
-    barangay = models.ForeignKey(Barangay,on_delete=models.CASCADE,null=True,blank=True)
+    region = models.ForeignKey(Region,on_delete=models.SET_NULL,null=True)
+    province = models.ForeignKey(Province,on_delete=models.SET_NULL,null=True)
+    city = models.ForeignKey(City,on_delete=models.SET_NULL,null=True)
+    barangay = models.ForeignKey(Barangay,on_delete=models.SET_NULL,null=True,blank=True)
     groups = models.ForeignKey(Group,null=True,on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs): 
@@ -31,7 +31,7 @@ class SalesLady(models.Model):
     golden_ticket = models.IntegerField(default=0)
     
     def __str__(self):
-        return self.user.first_name
+        return self.branch_name
 
 class Product(models.Model):
     category = (
@@ -49,6 +49,7 @@ class Product(models.Model):
     item_category = models.CharField(max_length=50,choices=category,null=True)
     price = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    ticket_value = models.IntegerField(default=0)
     def __str__(self):
         return self.item_name
 

@@ -7,11 +7,8 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        
-        
             
         <!-- Sidebar -->
-        
         {% if user.is_authenticated %}
             {% include 'farmercoupon/sidebar.html' %}
         <!-- End of Sidebar -->
@@ -23,7 +20,7 @@
 
                 <!-- Topbar -->
                 
-                {% if request.user.is_superuser %}
+                {% if user.is_authenticated %}
                     {% include 'farmercoupon/navbar.html' %}
                 {% endif %}
                 <!-- End of Topbar -->

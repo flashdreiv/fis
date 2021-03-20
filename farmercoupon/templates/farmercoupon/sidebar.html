@@ -2,7 +2,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'admin' %}">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'manageusers' %}">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
@@ -13,20 +13,18 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
+    {% if request.user.is_superuser %}
     <li class="nav-item active">
-        
-        {% if not request.user.is_superuser %}
-        <a class="nav-link" href="{% url 'saleslady' %}">
+        <!-- <a class="nav-link" href="{% url 'saleslady' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
-        {% endif %}
-        {% if request.user.is_superuser %}
+            <span>Dashboard</span></a> -->
         <a class="nav-link" href="{% url 'index' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
-        {% endif %}
-            
+       
     </li>
+    {% endif %}
+    
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -37,15 +35,15 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    {% if not request.user.is_superuser %}
+    <!-- {% if not request.user.is_superuser %}
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'viewcoupons' %}">
+        <a class="nav-link" href="viewcoupons">
             <i class="fas fa-users"></i>
             <span>View Coupons</span></a>
     </li>
-    {% endif %}
+    {% endif %} -->
     
-    {% if request.user.is_superuser %}
+    {% if user.groups.get.name == 'DAS' or user.groups.get.name == 'admin' %}
     <li class="nav-item">
         <a class="nav-link" href="{% url 'manageusers' %}">
             <i class="fas fa-users"></i>
@@ -66,6 +64,7 @@
             <i class="fas fa-dolly-flatbed"></i>
             <span>Manage Products</span></a>
     </li>
+    {% if user.groups.get.name == 'admin' %}
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
@@ -75,11 +74,12 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Reports:</h6>
-                <a class="collapse-item" href="{% url 'salesview' %}">Sales Per Item</a>
-                <a class="collapse-item" href="{% url 'salesview' %}">Sales Per Category</a>
+                <a class="collapse-item" href="{% url 'salesperitem' %}">Sales Per Item</a>
+                <a class="collapse-item" href="{% url 'salespercategory' %}">Sales Per Category</a>
                 <a class="collapse-item" href="cards.html">Coupon Reports</a>
             </div>
         </div>
+    {% endif %}
     </li>
     {% endif %}
     

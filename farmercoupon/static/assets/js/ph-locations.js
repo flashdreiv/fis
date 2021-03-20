@@ -1,6 +1,6 @@
 $('#id_region').change(function(){
     const regionId = $(this).val()
-    url_api_endpoint = 'api/location/provinces'
+    url_api_endpoint = '/api/location/provinces'
     $.ajax({
         method:"POST",
         url:url_api_endpoint,
@@ -23,7 +23,7 @@ $('#id_region').change(function(){
 
 $('#id_province').change(function(){
     const provinceId = $(this).val()
-    url_api_endpoint = 'api/location/cities'
+    url_api_endpoint = '/api/location/cities'
     $.ajax({
         method:"POST",
         url:url_api_endpoint,
@@ -45,7 +45,7 @@ $('#id_province').change(function(){
 
 $('#id_city').change(function(){
     const cityId = $(this).val()
-    url_api_endpoint = 'api/location/barangays'
+    url_api_endpoint = '/api/location/barangays'
     $.ajax({
         method:"POST",
         url:url_api_endpoint,
