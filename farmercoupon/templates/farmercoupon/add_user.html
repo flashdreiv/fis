@@ -1,0 +1,49 @@
+{% extends 'farmercoupon/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid">
+    {% if usertype == 'Farmer' %}
+    <h2>Add Farmer</h2>
+    <form method="POST">
+        {{userForm|crispy}}
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-3 mb-0">
+                {{form.region|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-2 mb-0">
+                {{form.province|as_crispy_field}}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 mb-0">
+                {{form.city|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-2 mb-0">
+                {{form.mobile_number|as_crispy_field}}
+            </div>
+            <div class="form-group col-md-2 mb-0">
+                {{form.land_area|as_crispy_field}}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 mb-0">
+                {{form.crops|as_crispy_field}}
+            </div> 
+        </div>
+        <input type="submit" value="Register" class="form-group col-md-1 mb-0 btn btn-primary btn-user btn-block" />
+        <br>
+    </form>
+    {% endif %}
+    
+    {% if usertype == 'Saleslady' %}
+        <h1>Add Saleslady</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{userForm|crispy}}
+            {{form|crispy}}
+            <input type="submit" value="Register" class="form-group col-md-1 mb-0 btn btn-primary btn-user btn-block" />
+        </form>
+    {% endif %}
+</div>
+{% endblock content %}

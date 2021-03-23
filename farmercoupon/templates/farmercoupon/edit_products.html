@@ -2,10 +2,9 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container-fluid">
-    <h1>Edit Farmer</h1>
+    <h1>Edit Products</h1>
     <form method="POST">
         {% csrf_token %}
-        {{userForm|crispy}}
         {{form|crispy}}
         <input type="submit" value="Update" class="form-group col-md-1 mb-0 btn btn-primary btn-user btn-block" />
     </form>

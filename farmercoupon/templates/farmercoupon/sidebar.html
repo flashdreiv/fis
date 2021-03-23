@@ -15,9 +15,6 @@
     <!-- Nav Item - Dashboard -->
     {% if request.user.is_superuser %}
     <li class="nav-item active">
-        <!-- <a class="nav-link" href="{% url 'saleslady' %}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a> -->
         <a class="nav-link" href="{% url 'index' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
@@ -45,9 +42,19 @@
     
     {% if user.groups.get.name == 'DAS' or user.groups.get.name == 'admin' %}
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'manageusers' %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
+            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-users"></i>
-            <span>Manage Users</span></a>
+            <span>Users</span>
+        </a>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Manage Users:</h6>
+                <a class="collapse-item" href="{% url 'manageusers' %}">View Users</a>
+                <a class="collapse-item"  name="addfarmeruser" href="{% url 'addusers' 'Farmer' %}">Add Farmer</a>
+                <a class="collapse-item"  name="addsalesuser" href="{% url 'addusers' 'Saleslady' %}">Add Sales</a>
+            </div>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'managecoupons' %}">

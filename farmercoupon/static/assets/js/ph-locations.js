@@ -20,7 +20,6 @@ $('#id_region').change(function(){
 
 })
 
-
 $('#id_province').change(function(){
     const provinceId = $(this).val()
     url_api_endpoint = '/api/location/cities'

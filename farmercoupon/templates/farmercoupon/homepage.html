@@ -1,0 +1,12 @@
+{% extends 'farmercoupon/base.html' %}
+{% block content %}
+    <h1>Home Page</h1>
+    
+    {% if user.is_authenticated %}
+    
+    {% else %}
+        <a href="{% url 'login' %}">Login</button>
+    {% endif %}
+    
+{% endblock content %}
+    

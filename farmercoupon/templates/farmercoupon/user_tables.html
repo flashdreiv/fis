@@ -12,7 +12,7 @@
                         <th>Name</th>
                         <th>User Type</th>
                         <th>Mobile Number</th>
-                        <th>Province</th>
+                        <th>Address/Branch</th>
                         <th>Standard Ticket</th>
                         <th>Golden Ticket</th>
                         <th>Update</th>
@@ -22,7 +22,7 @@
                         <th>Name</th>
                         <th>User Type</th>
                         <th>Mobile Number</th>
-                        <th>Province</th>
+                        <th>Address/Branch</th>
                         <th>Standard Ticket</th>
                         <th>Golden Ticket</th>
                         <th>Update</th>
@@ -30,15 +30,28 @@
                 </tfoot>
                 <tbody>
                     {% for user in users %}
+                    {% if user.farmer %}
+                        <tr>
+                            <td>{{user.first_name}} {{user.last_name}}</td>
+                            <td>{{user.farmer.groups.name}}</td>
+                            <td>{{user.farmer.mobile_number}}</td>
+                            <td>{{user.farmer.province}}</td>
+                            <td>{{user.farmer.standard_ticket}}</td>
+                            <td>{{user.farmer.golden_ticket}}</td>
+                            <td><a type="button" class="btn btn-primary" href="{% url 'editusers' 'Farmer' user.pk %}">Edit</a></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.saleslady %}
                     <tr>
                         <td>{{user.first_name}} {{user.last_name}}</td>
-                        <td>{{user.groups.name}}</td>
-                        <td>{{user.mobile_number}}</td>
-                        <td>{{user.province}}</td>
-                        <td>{{user.standard_ticket}}</td>
-                        <td>{{user.golden_ticket}}</td>
-                        <td><a type="button" class="btn btn-primary" href="{% url 'editusers' user.id %}">Edit</a></td>
+                        <td>Saleslady</td>
+                        <td>{{user.saleslady.mobile_number}}</td>
+                        <td>{{user.saleslady.branch_name}}</td>
+                        <td>{{user.saleslady.standard_ticket}}</td>
+                        <td>{{user.saleslady.golden_ticket}}</td>
+                        <td><a type="button" class="btn btn-primary" href="{% url 'editusers' 'Saleslady' user.pk %}">Edit</a></td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

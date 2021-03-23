@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User,Group
 from . models import Farmer,Coupon,Product,SalesLady
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordChangeForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from ph_locations.models import Region,Province,City,Barangay
@@ -17,7 +17,7 @@ class LoginForm(AuthenticationForm):
 
 class ApplyCouponForm(forms.Form):
     saleslady_list = [
-        (saleslady.pk,saleslady.user.first_name + ' '+saleslady.user.last_name) for saleslady in SalesLady.objects.all()
+        (saleslady.pk,saleslady.user.first_name + ' '+ saleslady.user.last_name) for saleslady in SalesLady.objects.all()
     ]
     product_list = [
         (product.pk,product.item_name) for product in Product.objects.all()
@@ -63,10 +63,10 @@ class ApplyCouponFormBlo(forms.Form):
         (product.pk,product.item_name) for product in Product.objects.order_by('-item_name')
     ]
     saleslady_list = [
-        (saleslady.pk,saleslady.branch_name) for saleslady in SalesLady.objects.all()
+        (saleslady.pk,saleslady.user.first_name + ' '+saleslady.user.last_name) for saleslady in SalesLady.objects.all()
     ]
     farmer_list = [
-        (farmer.pk,farmer.first_name + ' '+farmer.last_name) for farmer in Farmer.objects.all()
+        (farmer.pk,farmer.user.first_name + ' '+ farmer.user.last_name) for farmer in Farmer.objects.all()
     ]
     helper = FormHelper()
     helper.add_input(Submit('submit', 'Apply Coupon', css_class='btn-primary'))
@@ -74,12 +74,12 @@ class ApplyCouponFormBlo(forms.Form):
     farmer = forms.ChoiceField(required=True,choices=farmer_list)
     item = forms.ChoiceField(choices=product_list,required=True)
     count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)',required=True)
-    # ticket_value = forms.IntegerField(min_value=1,max_value=20,label='Enter ticket value',required=True)
+
     
 class AddFarmerForm(forms.ModelForm):
     class Meta:
         model = Farmer
-        fields = ['first_name','last_name','mobile_number','region','province','city']
+        fields = ['mobile_number','region','province','city','crops','land_area']
         
     def __init__(self, *args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -102,8 +102,30 @@ class AddFarmerForm(forms.ModelForm):
              self.fields['province'].queryset = self.instance.region.province_set.all()
              self.fields['city'].queryset = self.instance.province.city_set.all()
             
+class SalesLadyForm(forms.ModelForm):
+    class Meta:
+        model = SalesLady
+        fields  = ['branch_name','mobile_number']
 
+class UserForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name']
+ 
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+class ChangePasswordForm(PasswordChangeForm):
+    class Meta:
+        model = User
+
+    
         
+
+
         
 
         

@@ -1,7 +1,5 @@
 import requests,json
 
-
-
 class Globe:
     def __init__(self,app_id,app_secret,code,short_code):
         self.app_id = app_id

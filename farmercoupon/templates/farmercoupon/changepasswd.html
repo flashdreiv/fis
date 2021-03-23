@@ -2,13 +2,13 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container-fluid">
-    <h3>Manage Products</h1>
         <form method="POST">
+            <h1>Change Password:</h1>
             {% csrf_token %}
             {{form|crispy}}
-            <input type="submit" value="Add" class="form-group col-md-1 mb-2 btn btn-primary btn-user btn-block" />
+            <input type="submit" value="Login" class="btn btn-primary btn-user btn-block col-md-1"></input>  
         </form>
-    {% include 'farmercoupon/products_tables.html' %}
     </div>
+    
 {% endblock content %}
     
