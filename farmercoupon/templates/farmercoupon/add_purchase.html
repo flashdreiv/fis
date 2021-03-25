@@ -1,0 +1,10 @@
+{% extends 'farmercoupon/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Add Purchase</h1>
+    {{form.farmer.as_crispy}}
+</div>
+    {% include 'farmercoupon/purchase_form_table.html' %}
+{% endblock content %}
+    

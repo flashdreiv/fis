@@ -15,7 +15,7 @@
     <!-- Nav Item - Dashboard -->
     {% if request.user.is_superuser %}
     <li class="nav-item active">
-        <a class="nav-link" href="{% url 'index' %}">
+        <a class="nav-link" href="{% url 'admin' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
        
@@ -31,15 +31,6 @@
         Interface
     </div>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <!-- {% if not request.user.is_superuser %}
-    <li class="nav-item">
-        <a class="nav-link" href="viewcoupons">
-            <i class="fas fa-users"></i>
-            <span>View Coupons</span></a>
-    </li>
-    {% endif %} -->
-    
     {% if user.groups.get.name == 'DAS' or user.groups.get.name == 'admin' %}
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
@@ -57,14 +48,29 @@
         </div>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'managecoupons' %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsethree"
+            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-ticket-alt"></i>
-            <span>Manage Coupons</span></a>
+            <span>Coupons</span>
+        </a>
+        <div id="collapsethree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{% url 'managecoupons'%}">Generate Coupons</a>
+            </div>
+        </div>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'blocoupons' %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefour"
+            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-ticket-alt"></i>
-            <span>Big Land Owner</span></a>
+            <span>Purchases</span>
+        </a>
+        <div id="collapsefour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{% url 'viewpurchases'%}">View Purchases</a>
+                <a class="collapse-item" href="{% url 'addpurchases'%}">Add Purchases</a>
+            </div>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'manageproducts' %}">

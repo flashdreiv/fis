@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -6,6 +7,7 @@
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                
                 <thead>
                     <tr>
                         <!-- <th>Date Generated</th> -->
@@ -27,27 +29,15 @@
                         <th>Ticket Value</th>
                     </tr>
                 </tfoot>
-                <tbody>
-                    {% for coupon in coupons %}
+                <tbody>    
                     <tr>
-                        {% if coupon.item %}
-                        <td>Purchase</td>
-                        {% else %}
-                        <td>{{coupon.code}}</td>
-                        {% endif %}
-                        <td>{{coupon.item}}</td>
-                        <td>{{coupon.farmer}}</td>
-                        <td>{{coupon.saleslady}}</td>
-                        <td>{{coupon.is_golden_ticket}}</td>
-                        {% if coupon.item %}
-                        <td>{{coupon.item.ticket_value}}</td>
-                        {% else %}
-                        <td>{{coupon.ticket_value}}</td>
-                        {% endif %}
-                       
+                        <td>
+                            {{form.item}}
+                        </td>
+                        <td>
+                            {{form.purchase_date}}
+                        </td>
                     </tr>
-                    {% endfor %}
-                </tbody>
             </table>
         </div>
     </div>

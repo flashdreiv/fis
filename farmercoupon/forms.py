@@ -25,12 +25,8 @@ class ApplyCouponForm(forms.Form):
     code = forms.CharField(required=True)
     saleslady = forms.ChoiceField(required=True,choices=saleslady_list)
     item = forms.ChoiceField(required=True,choices=product_list)
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'Submit Coupon', css_class='btn-primary'))
 
 class GenerateCouponForm(forms.Form):
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'Generate Coupon', css_class='btn-primary'))
     count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)')
     ticket_value = forms.IntegerField(min_value=1,max_value=20,label='Enter ticket value',required=True)
 
@@ -58,23 +54,38 @@ class SalesReportForm(forms.Form):
     item = forms.ChoiceField(choices=product_list,required=True)
     category = forms.ChoiceField(choices=category_list,required=True)
 
-class ApplyCouponFormBlo(forms.Form):
-    product_list = [
-        (product.pk,product.item_name) for product in Product.objects.order_by('-item_name')
-    ]
-    saleslady_list = [
-        (saleslady.pk,saleslady.user.first_name + ' '+saleslady.user.last_name) for saleslady in SalesLady.objects.all()
-    ]
-    farmer_list = [
-        (farmer.pk,farmer.user.first_name + ' '+ farmer.user.last_name) for farmer in Farmer.objects.all()
-    ]
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'Apply Coupon', css_class='btn-primary'))
-    saleslady = forms.ChoiceField(required=True,choices=saleslady_list,label='Sales')
-    farmer = forms.ChoiceField(required=True,choices=farmer_list)
-    item = forms.ChoiceField(choices=product_list,required=True)
-    count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)',required=True)
+# class ApplyCouponFormBlo(forms.Form):
+#     product_list = [
+#         (product.pk,product.item_name) for product in Product.objects.order_by('-item_name')
+#     ]
+#     saleslady_list = [
+#         (saleslady.pk,saleslady.user.first_name + ' '+saleslady.user.last_name) for saleslady in SalesLady.objects.all()
+#     ]
+#     farmer_list = [
+#         (farmer.pk,farmer.user.first_name + ' '+ farmer.user.last_name) for farmer in Farmer.objects.all()
+#     ]
+#     helper = FormHelper()
+#     helper.add_input(Submit('submit', 'Apply Coupon', css_class='btn-primary'))
+#     saleslady = forms.ChoiceField(required=True,choices=saleslady_list,label='Sales')
+#     farmer = forms.ChoiceField(required=True,choices=farmer_list)
+#     item = forms.ChoiceField(choices=product_list,required=True)
+#     count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)',required=True)
 
+class ApplyPurchaseForm(forms.ModelForm):
+    item = forms.ModelChoiceField(Product.objects.order_by('-item_name'))
+    count = forms.IntegerField(min_value=0,max_value=300,label='Number of coupons to generate(Max=300)',required=True)
+    class Meta:
+        model = Coupon
+        ordering = ['item']
+        fields = ['farmer','saleslady','item','purchase_date']
+        widgets = {
+            'purchase_date': forms.DateInput(attrs={'type':'date'}),
+        }
+
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].required = True
     
 class AddFarmerForm(forms.ModelForm):
     class Meta:
@@ -108,10 +119,15 @@ class SalesLadyForm(forms.ModelForm):
         fields  = ['branch_name','mobile_number']
 
 class UserForm(UserCreationForm):
-
     class Meta:
         model = User
         fields = ['username','first_name','last_name']
+
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name']
+
  
 class ProductForm(forms.ModelForm):
     class Meta:

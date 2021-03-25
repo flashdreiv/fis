@@ -43,9 +43,7 @@
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                         Total Purchase (As to Date)</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    {% if request.user.saleslady %}
-                                       
-                                    {% endif %}
+                                        {{total_sales}}
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -65,9 +63,10 @@
                                         Ticket</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         {% if request.user.saleslady %}
-                                            {{request.user.saleslady.standard_ticket}}
+                                        {{request.user.saleslady.standard_ticket}}
+                                        {% else %}
+                                        {{request.user.farmer.standard_ticket}}
                                         {% endif %}
-                                        
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -87,7 +86,9 @@
                                         Golden Ticket Count</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         {% if request.user.saleslady %}
-                                            {{request.user.saleslady.standard_ticket}}
+                                        {{request.user.saleslady.golden_ticket}}
+                                        {% else %}
+                                        {{request.user.farmer.golden_ticket}}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -99,7 +100,22 @@
                     </div>
                 </div>
             </div>
-            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Checkout our Page</h6>
+                        </div>
+                        <div class="card-body">
+                            <a href="#" class="btn btn-primary btn-circle">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            Aljay Agro Industrial Solutions
+                        </div>
+                    </div>
+
+                </div>
+            </div>
             {% if request.user.farmer%}
             <div class="row">
                 <div class="col-lg-4 mb-4">
@@ -114,15 +130,15 @@
                             </form>
                         </div>
                     </div>
-            
+
                 </div>
             </div>
             {% endif %}
-                
-            
+
+
 
         </div>
-        <!-- /.container-fluid -->  
+        <!-- /.container-fluid -->
 
     </div>
     <!-- End of Main Content -->

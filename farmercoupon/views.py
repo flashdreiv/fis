@@ -1,21 +1,21 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
-from . forms import LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm,ApplyCouponFormBlo,AddFarmerForm,ProductForm,SalesLadyForm,UserForm,ChangePasswordForm
+from . forms import LoginForm,ApplyCouponForm,GenerateCouponForm,SalesReportForm,ApplyPurchaseForm,AddFarmerForm,ProductForm,SalesLadyForm,UserForm,ChangePasswordForm,UpdateUserForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
 from . models import Farmer,Coupon,Product,SalesLady
 from django.contrib.auth.models import User,Group
-from . generate_random_coupon import generate_coupon_code
 from datetime import date
 
 from django.db.models import Sum
 # Create your views here.
 
-def index(request):
-    return render(request,'farmercoupon/homepage.html')
+def page404(request):
+    return render(request,'farmercoupon/404.html')
 
 @login_required(login_url='login')
+
 @admin_only 
 def adminView(request):
     total_sales = 0
@@ -64,12 +64,14 @@ def loginPage(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
+        group = Group.objects.filter(user=user)
         if user is not None:
+            login(request, user)
             if user.is_superuser:
-                login(request, user)
                 return redirect('admin')
+            elif group[0].name == 'DAS':
+                return redirect('manageusers')
             else:
-                login(request, user)
                 return redirect('profile')
         else:
             messages.error(request, 'Incorrect Login credentials')
@@ -84,27 +86,36 @@ def logOutUser(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Farmer','Saleslady'])
 def userProfile(request):
-    if request.user.saleslady or request.user.farmer:
-        if request.user.saleslady.is_new_user:
+
+    user_group = Group.objects.get(user=request.user)
+    user_group = user_group.name
+    user = request.user.farmer if user_group == "Farmer" else request.user.saleslady
+    form = ApplyCouponForm()
+    total_sales = 0
+    if user_group == "Saleslady":
+        if user.is_new_user:
             return redirect('changepassword')
-        #Later for farmer coupon application
-        form = ApplyCouponForm()
-        
-        saleslady = request.user.saleslady
-        total_sales = 0
-        try:
-            sales = Coupon.objects.filter(saleslady=saleslady)
-            for sale in sales:
-                total_sales += sale.item.price | 0
-        except:
-            total_sales = 0
-
-        context = {
-            'form':form,
-            'total_sales':total_sales
-        }
-
-        
+        else:
+            try:
+                sales = Coupon.objects.filter(saleslady=user)
+                for sale in sales:
+                    total_sales += sale.item.price | 0
+            except:
+                total_sales = 0
+    elif user_group == "Farmer":
+            if user.is_new_user:
+                return redirect('changepassword')
+            else:
+                try:
+                    sales = Coupon.objects.filter(farmer=user)
+                    for sale in sales:
+                        total_sales += sale.item.price | 0
+                except:
+                    total_sales = 0
+    context = {
+        'form':form,
+        'total_sales':total_sales
+    }
     # form = ApplyCouponForm()
     # if request.method == 'POST':
     #     form = ApplyCouponForm(request.POST)
@@ -179,13 +190,13 @@ def addUsers(request,fuser="Farmer"):
 def editUsers(request,fuser,pk):
     #UserForm
     user = get_object_or_404(User,pk=pk)
-    editUserForm = UserForm(instance=user)
+    editUserForm = UpdateUserForm(instance=user)
     #FarmerForm or SalesladyForm
     member = Farmer.objects.get(user=user) if fuser == "Farmer" else SalesLady.objects.get(user=user)
     editForm = AddFarmerForm(instance=member) if fuser == "Farmer" else SalesLadyForm(instance=member)
     if request.method == "POST":
-        editForm = AddFarmerForm(request.POST, instance=member)
-        editUserForm = UserForm(request.POST,instance=user)
+        editForm = AddFarmerForm(request.POST, instance=member) if fuser == "Farmer" else SalesLadyForm(request.POST,instance=member)
+        editUserForm = UpdateUserForm(request.POST,instance=user)
         if editForm.is_valid() and editUserForm.is_valid():
             editForm.save()
             editUserForm.save()
@@ -199,13 +210,13 @@ def editUsers(request,fuser,pk):
     }
     return render(request,'farmercoupon/edit_users.html',context)
     
-
 @allowed_users(allowed_roles=['DAS','admin'])
 @login_required(login_url='login')
 def manageCoupons(request):
-    form = GenerateCouponForm(request.POST or None)
+    form = GenerateCouponForm()
     coupon_list = Coupon.objects.order_by('-date_created').exclude(farmer__isnull=False)
     if request.method == 'POST':
+        form = GenerateCouponForm(request.POST or None)
         if form.is_valid():
             count = request.POST.get('count')
             count = int(count)
@@ -215,18 +226,15 @@ def manageCoupons(request):
                 if int(ticket_value) > 14:
                     coupon.is_golden_ticket = True
                 coupon.ticket_value = ticket_value   
-                coupon.code = generate_coupon_code()
                 coupon.save()
             messages.success(request,f'Generated a total of {count} coupon for a ticket value of {coupon.ticket_value}')
             return redirect('managecoupons')
-        else:
-            form = GenerateCouponForm()
     context = {
         'form':form,
-        'coupons':coupon_list
+        'coupons':coupon_list,
     }
     return render(request,'farmercoupon/manage_coupons.html',context)
-    
+
 
 @login_required
 @allowed_users(allowed_roles=['DAS','admin'])
@@ -291,55 +299,103 @@ def salesCategory(request):
 
 @login_required
 @allowed_users(allowed_roles=['DAS','admin'])
-def manageBlo(request):
-    form = ApplyCouponFormBlo()
-    if request.method == "POST":    
-        form = ApplyCouponFormBlo(request.POST)
-        if form.is_valid():
-            saleslady = SalesLady.objects.get(pk=request.POST.get('saleslady'))
-            farmer = Farmer.objects.get(pk=request.POST.get('farmer'))
-            item = Product.objects.get(pk=request.POST.get('item'))
-            ticket_value = item.ticket_value
+def viewPurchases(request,view="generate"):
+    form = ApplyPurchaseForm()
+    if view == "generate":
+        if request.method == "POST":
             count = int(request.POST.get('count'))
-            for x in range(count):
-                coupon = Coupon.objects.create(code=generate_coupon_code(),saleslady=saleslady,ticket_value=ticket_value,farmer=farmer,item=item,purchase_date=date.today())
-                if coupon.item.item_category == '1':
-                    coupon.is_golden_ticket = True
-                    farmer.golden_ticket+=1
-                farmer.save()
-                coupon.save()
-            messages.success(request,f'Coupon applied to {coupon.farmer.user.first_name}')
-            return redirect('blocoupons')
-        else:
-            messages.error(request,'Failed to apply coupon')
-    coupons = Coupon.objects.exclude(farmer__isnull=True)
+            form = ApplyPurchaseForm(request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                for x in range(count):
+                    instance.pk = None
+                    instance.save()
+                messages.success(request,f'Coupon applied successfully')
+            else:
+                messages.error(request,form.errors)
+    else:
+        redirect('404')
+
+    # form = ApplyCouponFormBlo()
+    # if request.method == "POST":    
+    #     form = ApplyCouponFormBlo(request.POST)
+    #     if form.is_valid():
+    #         saleslady = SalesLady.objects.get(pk=request.POST.get('saleslady'))
+    #         farmer = Farmer.objects.get(pk=request.POST.get('farmer'))
+    #         item = Product.objects.get(pk=request.POST.get('item'))
+    #         ticket_value = item.ticket_value
+    #         count = int(request.POST.get('count'))
+    #         for x in range(count):
+    #             coupon = Coupon.objects.create(code=generate_coupon_code(),saleslady=saleslady,ticket_value=ticket_value,farmer=farmer,item=item,purchase_date=date.today())
+    #             if coupon.item.item_category == '1':
+    #                 coupon.is_golden_ticket = True
+    #                 farmer.golden_ticket+=1
+    #             farmer.save()
+    #             coupon.save()
+    #         form.save()
+    #         messages.success(request,f'Coupon applied to {coupon.farmer.user.first_name}')
+    #         return redirect('blocoupons')
+    #     else:
+    #         messages.error(request,'Failed to apply coupon')
+    coupons = Coupon.objects.exclude(farmer__isnull=True).order_by('date_created')[:500]
     context = {
         'form': form,
-        'coupons':coupons
+        'coupons':coupons,
+        'view':view
     }
     return render(request,'farmercoupon/manage_coupons.html',context)
-         
+
 @login_required
-@allowed_users(allowed_roles=['admin','DAS','Farmer','Saleslady'])
+@allowed_users(allowed_roles=['DAS','admin'])    
+def addPurchases(request):
+    form = ApplyPurchaseForm()
+    context = {
+        'form':form
+    }
+    return render(request,'farmercoupon/add_purchase.html',context)
+
+@login_required
+@allowed_users(allowed_roles=['Farmer','Saleslady'])
 def changePassword(request):
-    if request.user.saleslady:
-        if not request.user.saleslady.is_new_user:
+
+    user_group = Group.objects.get(user=request.user)
+    user_group = user_group.name
+    user1 = request.user.farmer if user_group == "Farmer" else request.user.saleslady
+
+    form = ChangePasswordForm(user1)
+
+    if user_group == "Saleslady":
+        if not user1.is_new_user:
             return redirect('profile')
-               
-    form = ChangePasswordForm(request.user)
-    if request.method == "POST":
-        form = ChangePasswordForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            if(user.saleslady.is_new_user):
-                user.saleslady.is_new_user = False
-                user.saleslady.save()
-                user.save()
-            messages.success(request,'Password successfully changed!')
-            return redirect('logout')
         else:
-            messages.warning(request,'Error changing password!')
+            if request.method == "POST":
+                form = ChangePasswordForm(request.user, request.POST)
+                if form.is_valid():
+                    user = form.save(commit=False)
+                    user.saleslady.is_new_user = False
+                    user.saleslady.save()
+                    user.save()
+                    messages.success(request,'Password successfully changed!')
+                    return redirect('logout')
+                else:
+                    messages.warning(request,'Error changing password!')
+    elif user_group == "Farmer":
+        if not user1.is_new_user:
+            return redirect('profile')     
+        else:
+           if request.method == "POST":
+                form = ChangePasswordForm(request.user, request.POST)
+                if form.is_valid():
+                    user = form.save(commit=False)
+                    user.farmer.is_new_user = False
+                    user.farmer.save()
+                    user.save()
+                    messages.success(request,'Password successfully changed!')
+                    return redirect('logout')
+                else:
+                    messages.warning(request,'Error changing password!') 
     context = {
         'form':form
     }
     return render(request,'farmercoupon/changepasswd.html',context)
+

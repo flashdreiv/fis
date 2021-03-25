@@ -1,13 +1,19 @@
 {% extends 'farmercoupon/base.html' %}
 {% load crispy_forms_tags %}
-{% crispy form form.helper %}
 {% block content %}
-    <div class="container-fluid">
-    <h3>Generate Purchase</h1>
-    {% csrf_token %}
-    {% crispy form %}
+<div class="container-fluid">
+   <form method="POST">
+        <div class="mb-4">
+            <h3>Generate Purchase</h1>
+                {% csrf_token %}
+                <div class="form-group">
+                    {%crispy form%}
+                </div>
+            <input type="submit" value="Generate" class="btn btn-primary btn-user btn-block col-lg-2">
+        </div>
+        
+    </form>
     {% include 'farmercoupon/coupon_tables.html' %}
-    </div>
-   
+</div>
+
 {% endblock content %}
-    
