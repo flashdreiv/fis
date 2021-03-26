@@ -1,10 +1,32 @@
 {% extends 'farmercoupon/base.html' %}
-
+{% load crispy_forms_field %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
 {% block content %}
 <div class="container-fluid">
     <h1>Add Purchase</h1>
-    {{form.farmer.as_crispy}}
+    <div class="row">
+        {%comment%}
+        <div class="col-lg-3">
+            <label for="farmer">Select farmer:</label>
+            {%crispy_field form.farmer%}
+            <label for="saleslady">Select saleslady:</label>
+            {%crispy_field form.saleslady%}
+
+            <label for="purchase_date">Enter purchase date:</label>
+            {%crispy_field form.purchase_date%}
+        </div>
+        {%endcomment%}
+
+
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12">
+            {% include 'farmercoupon/purchase_form_table.html' %}
+        </div>
+
+    </div>
+
 </div>
-    {% include 'farmercoupon/purchase_form_table.html' %}
 {% endblock content %}
-    

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'ph_locations',
     'rest_framework',
     'django_rename_app',
-    'multiselectfield'
+    'multiselectfield',
+    'accounts'
 
 ]
 

@@ -1,43 +1,43 @@
+{% load crispy_forms_field %}
 {% load crispy_forms_tags %}
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        <h6 class="m-0 font-weight-bold text-primary">
+        </h6>
+        <br>
+        <input type="button" id="add_purchase_button" value="Add Purchase" class="btn btn-primary btn-user btn-block"> 
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                
+            <table class="table table-bordered text-center" id="dataTable" cellspacing="50">
                 <thead>
                     <tr>
                         <!-- <th>Date Generated</th> -->
-                        <th>Code</th>
                         <th>Item</th>
-                        <th>Farmer</th>
-                        <th>Sales</th>
-                        <th>Golden Ticket</th>
-                        <th>Ticket Value</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Remove</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Code</th>
                         <th>Item</th>
-                        <th>Farmer</th>
-                        <th>Sales</th>
-                        <th>Golden Ticket</th>
-                        <th>Ticket Value</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Remove</th>
                     </tr>
                 </tfoot>
-                <tbody>    
+                <tbody>
+                    {%comment%}    
                     <tr>
                         <td>
-                            {{form.item}}
-                        </td>
-                        <td>
-                            {{form.purchase_date}}
-                        </td>
+                            {%crispy_field form.item%}
+                        </td>       
+                        <td><a type="button" class="btn btn-primary" href="">Remove</a></td>
                     </tr>
+                    {% endcomment %}
+                <tbody>
             </table>
         </div>
     </div>

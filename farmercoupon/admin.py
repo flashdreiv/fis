@@ -1,5 +1,6 @@
 from django.contrib import admin
-from . models import Farmer,Product,Coupon,SalesLady
+from accounts.models import Farmer,SalesLady
+from farmercoupon.models import Product,Coupon
 # Register your models here.
 
 admin.site.register(Farmer)
