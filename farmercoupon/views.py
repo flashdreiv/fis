@@ -4,11 +4,14 @@ from . forms import GenerateCouponForm,SalesReportForm,ApplyPurchaseForm,Product
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user,allowed_users,admin_only
-from .models import Coupon,Product,Purchases
+from .models import Coupon,Product,Purchase
 from accounts.models import Farmer,SalesLady
-from django.forms import formset_factory
+from django.forms import modelformset_factory
 from django.contrib.auth.models import User 
-
+from . generate_random_coupon import generate_coupon_code
+import datetime
+from django import forms
+from django.db.models import F
 
 # Create your views here.
 
@@ -73,95 +76,68 @@ def salesCategory(request):
     }   
     return render(request,'farmercoupon/sales_per_category_reports.html',context)
 
-# @login_required
-# @allowed_users(allowed_roles=['saleslady'])
-# def salesladyView(request):
-#     saleslady = request.user.saleslady
-#     total_sales = 0
-#     try:
-#         sales = Coupon.objects.filter(saleslady=saleslady)
-#         for sale in sales:
-#             total_sales += sales.item.price | 0
-#     except:
-#         total_sales = 0
-#     context = {
-#         'sales':total_sales
-#     }
-#     return render(request,'farmercoupon/saleslady_user.html',context)
-    
-# @login_required
-# @allowed_users(allowed_roles=['DAS','admin'])
-# def viewCoupons(request):
-#     saleslady = request.user.saleslady
-#     total_sales = 0
-#     try:
-#         sales = Coupon.objects.filter(saleslady=saleslady)
-#     except:
-#         total_sales = 0
-#     context = {
-#         'coupons':sales
-#     }
-#     return render(request,'farmercoupon/saleslady_view_coupons.html',context)
-
 @login_required
 @allowed_users(allowed_roles=['DAS','admin'])
-def viewPurchases(request,view="generate"):
-    form = ApplyPurchaseForm()
-    if view == "generate":
-        if request.method == "POST":
-            count = int(request.POST.get('count'))
-            form = ApplyPurchaseForm(request.POST)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                for x in range(count):
-                    instance.pk = None
-                    instance.save()
-                messages.success(request,f'Coupon applied successfully')
-            else:
-                messages.error(request,form.errors)
-    else:
-        redirect('404')
-
-    # form = ApplyCouponFormBlo()
-    # if request.method == "POST":    
-    #     form = ApplyCouponFormBlo(request.POST)
-    #     if form.is_valid():
-    #         saleslady = SalesLady.objects.get(pk=request.POST.get('saleslady'))
-    #         farmer = Farmer.objects.get(pk=request.POST.get('farmer'))
-    #         item = Product.objects.get(pk=request.POST.get('item'))
-    #         ticket_value = item.ticket_value
-    #         count = int(request.POST.get('count'))
-    #         for x in range(count):
-    #             coupon = Coupon.objects.create(code=generate_coupon_code(),saleslady=saleslady,ticket_value=ticket_value,farmer=farmer,item=item,purchase_date=date.today())
-    #             if coupon.item.item_category == '1':
-    #                 coupon.is_golden_ticket = True
-    #                 farmer.golden_ticket+=1
-    #             farmer.save()
-    #             coupon.save()
-    #         form.save()
-    #         messages.success(request,f'Coupon applied to {coupon.farmer.user.first_name}')
-    #         return redirect('blocoupons')
-    #     else:
-    #         messages.error(request,'Failed to apply coupon')
-    coupons = Coupon.objects.exclude(farmer__isnull=True).order_by('date_created')[:500]
+def viewPurchases(request):
+    purchases = Purchase.objects.all()
     context = {
-        'form': form,
-        'coupons':coupons,
-        'view':view
+        'purchases':purchases,
     }
-    return render(request,'farmercoupon/manage_coupons.html',context)
+    return render(request,'farmercoupon/view_purchases.html',context)
 
 @login_required
 @allowed_users(allowed_roles=['DAS','admin'])    
-def addPurchases(request):
-    form = AddPurchaseForm()
+def addPurchase(request):
+    AddPurchaseFormset = modelformset_factory(Purchase,
+    fields=['purchase_date','farmer','item','saleslady'],
+        widgets = {
+            'purchase_date': forms.DateInput(attrs={'type': 'date','required':True,'autofocus': 'autofocus'}),
+            'item': forms.Select(attrs={'required':True}),
+            'farmer': forms.Select(attrs={'required':True}),
+            'saleslady': forms.Select(attrs={'required':True}),
+        }
+    )
+    formset = AddPurchaseFormset(queryset=Purchase.objects.none())
+    if request.method == "POST":
+        formset = AddPurchaseFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                instance = form.save(commit=False)
+                farmer = Farmer.objects.get(pk=instance.farmer.id)
+                saleslady = SalesLady.objects.get(pk=instance.saleslady.id)
+                if instance.item.item_category == '1':
+                    farmer.golden_ticket = F('golden_ticket') +1
+                    saleslady.golden_ticket = F('golden_ticket') +1
+                elif int(instance.item.item_category) > 1:
+                    farmer.standard_ticket = F('standard_ticket') +1
+                    saleslady.standard_ticket = F('standard_ticket') +1
+                saleslady.save()
+                farmer.save()
+                instance.save()
+            messages.success(request,'All Purchase have been saved')
+            return redirect('addpurchase')
+        else:
+            messages.warning(request,'Purchases cant be saved')
+            return redirect('addpurchase')
+    context = {
+        'formset':formset,
+    }
+    return render(request,'farmercoupon/add_purchase.html',context)
 
-    AddPurchaseFormset = formset_factory(AddPurchaseForm,extra=2,can_delete=True)
 
-    form = AddPurchaseFormset
-
+def editProducts(request,pk):
+    product = get_object_or_404(Product,pk=pk)
+    form = ProductForm(instance=product)
+    if request.method == "POST":
+        form = ProductForm(request.POST,instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Product updated successfully')
+            return redirect('manageproducts')
+        else:
+            messages.warning(request,'Failed to update product details')
     context = {
         'form':form
     }
-    return render(request,'farmercoupon/add_purchase.html',context)
+    return render(request,'farmercoupon/edit_products.html',context)
 

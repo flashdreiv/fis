@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
-from farmercoupon.models import Coupon,Farmer
+from farmercoupon.models import Coupon,Farmer,Purchase,Product
 from django.db.models import Sum
 from . sales_report_manipulation import get_purchase_list,get_purchase_list_item
 from . globe import Globe
@@ -24,8 +24,9 @@ def SalesReportApi(request):
         dateFrom = request.POST.get('dateFrom')
         dateTo = request.POST.get('dateTo')
         item = request.POST.get('item')
-        purchases = Coupon.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
-        result = get_purchase_list(purchases)
+        coupons = Coupon.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
+        purchases = Purchase.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
+        result = {**get_purchase_list(coupons),**get_purchase_list(purchases)}
         months = dict.keys(result)
         defaultData = [] 
         for key in result:
@@ -37,18 +38,30 @@ def SalesReportApi(request):
             }
     return Response(data)
 
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def earningsOverview(request):
+    earnings = []
+    
+    data = {
+        'earnings':earnings
+    }
+    return Response(data)
+
 
 @api_view(["GET"])
 @permission_classes([IsAdminUser])
 def revenue(request):
     revenue_list = []
     try:
-        purchases = Coupon.objects.filter(item__lte=5)
-        data = get_purchase_list_item(purchases)
+        coupon = Coupon.objects.filter(item__item_category='1')
+        purchase = Purchase.objects.filter(item__item_category='1')
+        data = {**get_purchase_list_item(coupon),**get_purchase_list_item(purchase)}
         for key in data:
             revenue_list.append(data[key])
     except:
         revenue_list = []
+        print('error')
     data = {
         'revenue':revenue_list
     }

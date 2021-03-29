@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordChangeForm
 from django.contrib.auth.models import User,Group
 from . models import Farmer,SalesLady
-from farmercoupon.models import Product
+from farmercoupon.models import Product,Coupon
 from ph_locations.models import Region,Province,City,Barangay
 
 class LoginForm(AuthenticationForm):
@@ -13,17 +13,18 @@ class LoginForm(AuthenticationForm):
             'username',
             'password'
         ]
-class ApplyCouponForm(forms.Form):
-    saleslady_list = [
-        (saleslady.pk,saleslady.user.first_name + ' '+ saleslady.user.last_name) for saleslady in SalesLady.objects.all()
-    ]
-    product_list = [
-        (product.pk,product.item_name) for product in Product.objects.all()
-    ]
-    code = forms.CharField(required=True)
-    saleslady = forms.ChoiceField(required=True,choices=saleslady_list)
-    item = forms.ChoiceField(required=True,choices=product_list)
 
+class ApplyCouponForm(forms.ModelForm):
+    class Meta:
+        model = Coupon
+        fields = ['code','saleslady','item']
+    # code = forms.CharField(max_length=20)
+
+    
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].required = True    
 class AddFarmerForm(forms.ModelForm):
     class Meta:
         model = Farmer

@@ -57,7 +57,7 @@ $(document).on('submit','#generateSales',function(e){
         success: function (res) {
             labels = res.labels
             defaultData = res.defaultData
-            max_val = defaultData.sort()[0]
+            max_val = defaultData.sort()[0]*2
             min_val = defaultData.sort()[defaultData.length-1]
             fuck = buildChart()
         }

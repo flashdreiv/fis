@@ -4,8 +4,10 @@ from accounts.forms import LoginForm,AddFarmerForm,SalesLadyForm,UserForm,Change
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from farmercoupon.decorators import unauthenticated_user,allowed_users,admin_only
-from farmercoupon.models import Farmer,Coupon,Product,SalesLady
+from farmercoupon.models import Farmer,Coupon,Product,SalesLady,Purchase
 from django.contrib.auth.models import User,Group
+from django.db.models import Sum
+import datetime
 
 # Create your views here.
 
@@ -92,11 +94,18 @@ def adminView(request):
     total_ticket = 0
     context = {}
     try:
-        purchases = Coupon.objects.exclude(farmer__isnull=True)
+        total_ticket = Coupon.objects.exclude(farmer__isnull=True).aggregate(Sum('ticket_value'))['ticket_value__sum']
         total_golden_ticket = Coupon.objects.filter(farmer__isnull=False,is_golden_ticket=True).count()
-        total_ticket = Coupon.objects.filter(farmer__isnull=False,is_golden_ticket=False).count()
-        for purchase in purchases:
-            total_sales += purchase.item.price
+        coupon = Coupon.objects.exclude(farmer__isnull=True)
+        purchase = Purchase.objects.all()
+        for cop in coupon:
+            total_sales += cop.item.price
+        for pur in purchase:
+            total_sales+=pur.item.price
+            if pur.item.item_category == '1':
+                total_golden_ticket+=1
+            elif int(pur.item.item_category)>1:
+                total_ticket+=1
     except:
         pass
     context = {
@@ -104,7 +113,6 @@ def adminView(request):
         'total_ticket':total_ticket,
         'total_golden_ticket':total_golden_ticket
     }
-    print(total_ticket)
     return render(request,'accounts/admin.html',context)
 
 @allowed_users(allowed_roles=['DAS','admin'])
@@ -185,8 +193,11 @@ def userProfile(request):
         else:
             try:
                 sales = Coupon.objects.filter(saleslady=user)
+                purchases = Purchase.objects.filter(saleslady=user)
                 for sale in sales:
                     total_sales += sale.item.price | 0
+                for purchase in purchases:
+                    total_sales+=purchase.item.price
             except:
                 total_sales = 0
     elif user_group == "Farmer":
@@ -195,10 +206,42 @@ def userProfile(request):
             else:
                 try:
                     sales = Coupon.objects.filter(farmer=user)
+                    purchases = Purchase.objects.filter(farmer=user)
                     for sale in sales:
                         total_sales += sale.item.price | 0
+                    for purchase in purchases:
+                        total_sales+=purchase.item.price
                 except:
                     total_sales = 0
+    if request.method == "POST":
+        try:
+            coupon = get_object_or_404(Coupon,code=request.POST.get('code'),is_used=False)
+            form = ApplyCouponForm(request.POST,instance=coupon)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.farmer = user
+                if instance.ticket_value == instance.item.ticket_value:
+                    #Item is a golden ticket
+                    if instance.item.ticket_value > 14:
+                        instance.farmer.golden_ticket+=1
+                        instance.saleslady.golden_ticket+=1
+                    elif instance.item.ticket_value < 14:
+                        instance.farmer.standard_ticket+=coupon.ticket_value
+                        instance.saleslady.standard_ticket+=coupon.ticket_value
+                    instance.is_used = True
+                    instance.purchase_date = datetime.date.today()
+                    instance.farmer.save()
+                    instance.saleslady.save()
+                    instance.save()
+                    messages.success(request,'Coupon successfully applied')
+                    return redirect('profile')
+                else:
+                    messages.warning(request,'Please select the right product for your code')
+                    return redirect('profile')
+        except:
+            messages.warning(request,'Coupon entered is invalid')
+            return redirect('profile')
+        
     context = {
         'form':form,
         'total_sales':total_sales

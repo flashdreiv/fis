@@ -1,44 +1,40 @@
-{% load crispy_forms_field %}
 {% load crispy_forms_tags %}
-<!-- DataTales Example -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">
-        </h6>
-        <br>
-        <input type="button" id="add_purchase_button" value="Add Purchase" class="btn btn-primary btn-user btn-block"> 
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered text-center" id="dataTable" cellspacing="50">
-                <thead>
-                    <tr>
-                        <!-- <th>Date Generated</th> -->
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Remove</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {%comment%}    
-                    <tr>
-                        <td>
-                            {%crispy_field form.item%}
-                        </td>       
-                        <td><a type="button" class="btn btn-primary" href="">Remove</a></td>
-                    </tr>
-                    {% endcomment %}
-                <tbody>
-            </table>
+
+<div class="container-fluid">
+  <form id="demo" method="POST">
+    {% csrf_token %}
+    <div disabled class="empty-form" style="display: none">
+      <div>
+        <div class="form-row">
+          {% for field in formset.empty_form %}
+          <div class="form-group col-md-3 mb-0">
+            {{field|as_crispy_field}}
+          </div>
+          {% endfor %}
         </div>
+        <button type="button" class="btn btn-primary btn-user" data-formset-remove-form>
+          DELETE
+        </button>
+        <hr>
+      </div>
     </div>
+ 
+    <div class="forms">
+      {{formset.management_form}}
+      {% for form in formset %}
+      <div class="form-row">
+        {% for field in form %}
+        <div class="form-group col-md-3 mb-0">
+          {{field|as_crispy_field}}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="btn btn-primary btn-user" id="add_more" data-formset-add-form>
+      Add purchase form
+    </button>
+    <input type="submit" value="Submit" class="btn btn-primary btn-user">
+  </form>
+
 </div>

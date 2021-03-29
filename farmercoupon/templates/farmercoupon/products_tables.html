@@ -31,7 +31,7 @@
                         <td>{{product.get_item_category_display}}</td>
                         <td>{{product.price}}</td>
                         <td>{{product.ticket_value}}</td>
-                        <td><a type="button" class="btn btn-primary" href="">Edit</a></td>
+                        <td><a type="button" class="btn btn-primary" href="{% url 'editproducts' product.pk %}">Edit</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -12,11 +12,16 @@
  <script src="{% static 'assets/js/sb-admin-2.min.js'%}"></script>
 
  <!-- Chart.js -->
- <script src="{% static 'assets/vendor/chart.js/Chart.min.js'%}"></script>
- <script src="{% static 'assets/js/chart.js'%}"></script>
 
-<!-- ph locations.js -->
+{% if request.path == '/managecoupons/sales/item/' or request.path == '/accounts/admin'%}
+<script src="{% static 'assets/vendor/chart.js/Chart.min.js'%}"></script>
+<script src="{% static 'assets/js/chart.js'%}"></script>
+{% endif %}
     
+
+
+<!-- ph locations.js --> 
+
 <script src="{% static 'assets/js/ph-locations-scripts.js'%}"></script>
 <script src="{% static 'assets/js/ph-locations.js'%}"></script>
 <script src="{% static 'assets/js/main.js'%}"></script>
@@ -26,6 +31,11 @@
 <script src="{% static 'assets/vendor/datatables/dataTables.bootstrap4.min.js'%}"></script>
 <script src="{% static 'assets/js/data-table.js'%}"></script>
 
+<!-- form manipulation js -->
+{% if request.path == '/managecoupons/purchases/add' %}
+<script src="{% static 'assets/js/form_manipulation.js'%}"></script>
+{% endif %}
+    
 
 
 

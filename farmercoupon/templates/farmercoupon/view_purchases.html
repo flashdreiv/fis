@@ -1,0 +1,46 @@
+{% extends 'farmercoupon/base.html' %}
+
+{% block content %}
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date created</th>
+                        <th>Purchase date</th>
+                        <th>Item</th>
+                        <th>Farmer</th>
+                        <th>Saleslady</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Date created</th>
+                        <th>Purchase date</th>
+                        <th>Item</th>
+                        <th>Farmer</th>
+                        <th>Saleslady</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr>
+                        <td>{{purchase.date_created | date}}</td>
+                        <td>{{purchase.purchase_date}}</td>
+                        <td>{{purchase.item}}</td>
+                        <td>{{purchase.farmer}}</td>
+                        <td>{{purchase.saleslady}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

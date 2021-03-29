@@ -1,4 +1,5 @@
 <!-- Sidebar -->
+{% if user.groups.get.name == 'DAS' or user.groups.get.name == 'admin' %}
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -77,8 +78,8 @@
         </a>
         <div id="collapsefour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{% url 'viewpurchases'%}">View Purchases</a>
-                <a class="collapse-item" href="{% url 'addpurchases'%}">Add Purchases</a>
+                <a class="collapse-item" href="{% url 'viewpurchases'%}">View Purchase</a>
+                <a class="collapse-item" href="{% url 'addpurchase'%}">Add Purchase</a>
             </div>
         </div>
     </li>
@@ -115,4 +116,5 @@
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
 </ul>
+{% endif %}
 <!-- End of Sidebar -->

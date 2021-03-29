@@ -1,0 +1,30 @@
+{% load crispy_forms_tags %}
+
+<div class="container-fluid">
+  <form id="demo" method="POST">
+  {% csrf_token %}
+  <div disabled class="empty-form" style="display: none">
+    <div>
+      {{formset.empty_form|crispy}}
+      <button type="button" data-formset-remove-form>
+        DELETE
+      </button>
+    </div>
+  </div>
+  <div class="forms">
+    {{formset.management_form}}
+    {{formset|crispy}} 
+  </div>
+ <div class="controls">
+    <button type="button" class="btn btn-primary btn-user btn-block" data-formset-add-form>
+      Add new form
+    </button>
+    <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block">  
+  </div>   
+
+</form>
+</div>
+
+
+
+

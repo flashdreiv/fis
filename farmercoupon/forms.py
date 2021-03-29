@@ -1,9 +1,11 @@
 from django import forms
 
 from accounts.models import Farmer,SalesLady
-from  . models import Product,Coupon,Purchases
+from  . models import Product,Coupon,Purchase
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit,Field
+from crispy_forms.layout import Submit,Layout,Button
+from crispy_forms.bootstrap import FormActions
+
 
 
 
@@ -54,20 +56,25 @@ class ApplyPurchaseForm(forms.ModelForm):
 
 class AddPurchaseForm(forms.ModelForm):
     quantity = forms.IntegerField(min_value=0)
-    price = forms.IntegerField(min_value=0)
     class Meta:
-        model = Purchases
-        fields = ['purchase_date','user','item']
+        model = Purchase
+        fields = ['purchase_date','item','farmer','saleslady']
         widgets = {
             'purchase_date': forms.DateInput(attrs={'type':'date'}),
         }
-
+    
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].required = True     
+  
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
 
+       
 
     
         
