@@ -11,30 +11,30 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Date created</th>
                         <th>Purchase date</th>
                         <th>Item</th>
                         <th>Farmer</th>
                         <th>Saleslady</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Date created</th>
                         <th>Purchase date</th>
                         <th>Item</th>
                         <th>Farmer</th>
                         <th>Saleslady</th>
+                        <th>Price</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     {% for purchase in purchases %}
                     <tr>
-                        <td>{{purchase.date_created | date}}</td>
                         <td>{{purchase.purchase_date}}</td>
                         <td>{{purchase.item}}</td>
                         <td>{{purchase.farmer}}</td>
                         <td>{{purchase.saleslady}}</td>
+                        <td>{{purchase.item.price}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

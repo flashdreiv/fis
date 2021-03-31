@@ -7,10 +7,9 @@ from rest_framework.response import Response
 
 from farmercoupon.models import Coupon,Farmer,Purchase,Product
 from django.db.models import Sum
-from . sales_report_manipulation import get_purchase_list,get_purchase_list_item
+from . sales_report_manipulation import get_purchase_list,get_purchase_list_item,merge_dict
 from . globe import Globe
 from ph_locations . models import Region,Province,City,Barangay
-
 
 #Globe API
 APP_ID = "6GoBCE4MMeCp5ir5zdcMnGC8kGjnC4jj"
@@ -26,15 +25,31 @@ def SalesReportApi(request):
         item = request.POST.get('item')
         coupons = Coupon.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
         purchases = Purchase.objects.filter(item=item,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
-        result = {**get_purchase_list(coupons),**get_purchase_list(purchases)}
-        months = dict.keys(result)
-        defaultData = [] 
-        for key in result:
-            defaultData.append(result[key])
+        result = merge_dict(get_purchase_list(coupons),get_purchase_list(purchases))
+        months = result.keys()
+        defaultData = result.values()
         data = {
             'labels':months,
             'defaultData':defaultData,
-            'item':item
+            }
+    return Response(data)
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def salesReportPerCategory(request):    
+    if request.method == "POST":
+        dateFrom = request.POST.get('dateFrom')
+        dateTo = request.POST.get('dateTo')
+        category = request.POST.get('category')
+        coupons = Coupon.objects.filter(item__item_category=category,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
+        purchases = Purchase.objects.filter(item__item_category=category,purchase_date__gte=dateFrom,purchase_date__lte=dateTo).order_by('purchase_date__month')
+        result = merge_dict(get_purchase_list(coupons),get_purchase_list(purchases))
+        months = result.keys()
+        defaultData = result.values()
+        print(category)
+        data = {
+            'labels':months,
+            'defaultData':defaultData,
             }
     return Response(data)
 
@@ -42,9 +57,19 @@ def SalesReportApi(request):
 @permission_classes([IsAdminUser])
 def earningsOverview(request):
     earnings = []
-    
+    months = []
+    try:
+        coupon = Coupon.objects.exclude(farmer__isnull=True).order_by('purchase_date__month')
+        purchase = Purchase.objects.order_by('purchase_date__month')
+        data = merge_dict(get_purchase_list(coupon),get_purchase_list(purchase))
+        earnings = data.values()
+        months = data.keys()
+    except:
+        earnings = []
+        labels = []
     data = {
-        'earnings':earnings
+        'earnings':earnings,
+        'labels':months
     }
     return Response(data)
 
@@ -61,7 +86,7 @@ def revenue(request):
             revenue_list.append(data[key])
     except:
         revenue_list = []
-        print('error')
+        
     data = {
         'revenue':revenue_list
     }

@@ -25,7 +25,11 @@ SECRET_KEY = '8_ns6vn)%(%k4v_$pgrbv5spk0p)h0f6#_7vew#6(ow9$gorc('
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
 
 ALLOWED_HOSTS = ['*']
 
@@ -46,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_rename_app',
     'multiselectfield',
-    'accounts'
+    'accounts',
+    'debug_toolbar'
 
 ]
 
@@ -54,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

@@ -13,7 +13,7 @@
 
  <!-- Chart.js -->
 
-{% if request.path == '/managecoupons/sales/item/' or request.path == '/accounts/admin'%}
+{% if request.path == '/managecoupons/sales/item/' or request.path == '/accounts/admin' or request.path == '/managecoupons/sales/category/'%}
 <script src="{% static 'assets/vendor/chart.js/Chart.min.js'%}"></script>
 <script src="{% static 'assets/js/chart.js'%}"></script>
 {% endif %}

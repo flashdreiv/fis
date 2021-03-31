@@ -31,6 +31,8 @@ var defaultData = []
 var labels = []
 var max_val,min_val
 
+var label_earnings = []
+
 $(document).ready(function() {
     $.ajax({
         method: "GET",
@@ -40,6 +42,19 @@ $(document).ready(function() {
             buildPieChart()
         }
     })
+
+    $.ajax({
+        method: "GET",
+        url: "/api/earnings/",
+        success: function (res) {
+            defaultData = res.earnings
+            label_earnings = res.labels
+            areaChart = buildAreaChart()
+            
+        }
+    })
+    areaChart.destroy()
+
 });
 
 $(document).on('submit','#generateSales',function(e){
@@ -59,11 +74,37 @@ $(document).on('submit','#generateSales',function(e){
             defaultData = res.defaultData
             max_val = defaultData.sort()[0]*2
             min_val = defaultData.sort()[defaultData.length-1]
-            fuck = buildChart()
+            barChart = buildChart()
         }
     })
-    fuck.destroy()
+    barChart.destroy()
 })
+
+$(document).on('submit','#generateSalesPerCategory',function(e){
+  e.preventDefault();
+  $.ajax({
+      method: "POST",
+      url: '/api/sales/category/',
+      data:{
+          // must be the input id
+          dateFrom: $('#id_dateFrom').val(),
+          dateTo: $('#id_dateTo').val(),
+          category: $('#id_category').val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+      },
+      success: function (res) {
+          labels = res.labels
+          defaultData = res.defaultData
+          barChart = buildChart()
+      }
+  })
+})
+
+
+
+
+
+
 
 function buildChart(){
     var ctx = document.getElementById("myBarChart");
@@ -105,8 +146,8 @@ function buildChart(){
                 }],
                 yAxes: [{
                     ticks: {
-                        min: 0,
-                        max: max_val + 10000,
+                        // min: 0,
+                        // max: max_val + 10000,
                         maxTicksLimit: 10,
                         padding: 10,
                         // Include a dollar sign in the ticks
@@ -186,5 +227,98 @@ function buildPieChart(){
         cutoutPercentage: 80,
       },
     });
+}
+
+
+function buildAreaChart(){
+    var ctx = document.getElementById("myAreaChart");
+var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: label_earnings,
+    datasets: [{
+      label: "Earnings",
+      lineTension: 0.3,
+      backgroundColor: "rgba(78, 115, 223, 0.05)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      pointRadius: 3,
+      pointBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointBorderColor: "rgba(78, 115, 223, 1)",
+      pointHoverRadius: 3,
+      pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+      pointHitRadius: 10,
+      pointBorderWidth: 2,
+      data: defaultData,
+    }],
+  },
+  options: {
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 25,
+        top: 25,
+        bottom: 0
+      }
+    },
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'date'
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false
+        },
+        ticks: {
+          maxTicksLimit: 7
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          maxTicksLimit: 5,
+          padding: 10,
+          // Include a dollar sign in the ticks
+          callback: function(value, index, values) {
+            return '₱' + number_format(value);
+          }
+        },
+        gridLines: {
+          color: "rgb(234, 236, 244)",
+          zeroLineColor: "rgb(234, 236, 244)",
+          drawBorder: false,
+          borderDash: [2],
+          zeroLineBorderDash: [2]
+        }
+      }],
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      titleMarginBottom: 10,
+      titleFontColor: '#6e707e',
+      titleFontSize: 14,
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      intersect: false,
+      mode: 'index',
+      caretPadding: 10,
+      callbacks: {
+        label: function(tooltipItem, chart) {
+          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+          return datasetLabel + ': ₱' + number_format(tooltipItem.yLabel);
+        }
+      }
+    }
+  }
+});
+
 }
 

@@ -8,7 +8,6 @@ from .models import Coupon,Product,Purchase
 from accounts.models import Farmer,SalesLady
 from django.forms import modelformset_factory
 from django.contrib.auth.models import User 
-from . generate_random_coupon import generate_coupon_code
 import datetime
 from django import forms
 from django.db.models import F
@@ -23,7 +22,7 @@ def page404(request):
 @login_required(login_url='login')
 def manageCoupons(request):
     form = GenerateCouponForm()
-    coupon_list = Coupon.objects.order_by('-date_created').exclude(farmer__isnull=False)
+    coupon_list = Coupon.objects.order_by('-date_created')
     if request.method == 'POST':
         form = GenerateCouponForm(request.POST or None)
         if form.is_valid():
@@ -68,6 +67,7 @@ def salesView(request):
         'form':form,
     }   
     return render(request,'farmercoupon/sales_per_item_reports.html',context)
+    
 @admin_only
 def salesCategory(request): 
     form = SalesReportForm()

@@ -30,11 +30,7 @@
                 <tbody>
                     {% for coupon in coupons %}
                     <tr>
-                        {% if coupon.item %}
-                        <td>Purchase</td>
-                        {% else %}
                         <td>{{coupon.code}}</td>
-                        {% endif %}
                         <td>{{coupon.item}}</td>
                         <td>{{coupon.farmer}}</td>
                         <td>{{coupon.saleslady}}</td>
