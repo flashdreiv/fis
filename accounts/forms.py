@@ -29,6 +29,18 @@ class AddFarmerForm(forms.ModelForm):
     class Meta:
         model = Farmer
         fields = ['mobile_number','region','province','city','crops','land_area']
+
+    def clean_land_area(self):
+        land_area = self.cleaned_data.get('land_area')
+        return land_area if land_area is not None else 0
+
+    def clean_standard_ticket(self):
+        standard_ticket = self.cleaned_data.get('standard_ticket')
+        return standard_ticket if standard_ticket is not None else 0
+
+    def clean_golden_ticket(self):
+        golden_ticket = self.cleaned_data.get('golden_ticket')
+        return golden_ticket if golden_ticket is not None else 0
         
     def __init__(self, *args,**kwargs):
         super().__init__(*args,**kwargs)

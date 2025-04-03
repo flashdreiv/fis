@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django_rename_app',
     'multiselectfield',
     'accounts',
-    'debug_toolbar'
 
 ]
 
@@ -59,7 +58,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -92,12 +90,8 @@ WSGI_APPLICATION = 'fis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Farmers',
-        'USER': 'postgres',
-        'PASSWORD': 'Off_by_0ne',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',  
+        'NAME': BASE_DIR / 'db.sqlite3', 
     }
 }
 
